@@ -2,6 +2,8 @@ extends Node2D
 
 @onready var mesh = $LegMesh
 @onready var foot_sprite = $Foot
+@onready var segment_sprites = $SegmentSprites
+@export var segment_texture: Texture2D
 
 @export var num_joints := 6
 @export var joint_spacing := 16.0
@@ -33,7 +35,9 @@ func _process(delta):
 		var angle = (foot_pos - prev_pos).angle()
 
 		foot_sprite.global_position = mesh.to_global(foot_pos)
-		foot_sprite.rotation = angle
+		foot_sprite.rotation = angle - PI / 2
+	
+	update_segment_sprites(smooth)
 
 func generate_joint_positions() -> Array:
 	var joints := []
@@ -95,3 +99,28 @@ func build_leg_polygon(points: Array) -> PackedVector2Array:
 	poly.append_array(left)
 	poly.append_array(right)
 	return poly
+
+func update_segment_sprites(points: Array) -> void:
+	# Ensure enough sprites exist
+	while segment_sprites.get_child_count() < points.size() - 1:
+		var seg = Sprite2D.new()
+		seg.texture = segment_texture
+		segment_sprites.add_child(seg)
+
+	# Reuse and update each sprite
+	for i in range(points.size() - 1):
+		var seg = segment_sprites.get_child(i) as Sprite2D
+		seg.global_position = mesh.to_global(points[i])
+		seg.z_index = z_index
+		seg.z_as_relative = false
+
+		if i < points.size() - 2:
+			var dir = (points[i + 1] - points[i]).normalized()
+			seg.rotation = dir.angle() - PI / 2
+		else:
+			var dir = (points[i + 1] - points[i - 1]).normalized()
+			seg.rotation = dir.angle() - PI / 2
+	
+	# Hide extras (if any)
+	for i in range(points.size() - 1, segment_sprites.get_child_count()):
+		segment_sprites.get_child(i).visible = false
