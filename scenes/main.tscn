@@ -1,25 +1,8 @@
-[gd_scene load_steps=6 format=3 uid="uid://d1k1x3tnec2lj"]
+[gd_scene load_steps=2 format=3 uid="uid://d1k1x3tnec2lj"]
 
-[ext_resource type="Script" uid="uid://c8s566755sjlx" path="res://scripts/Humanoid.gd" id="1_o5qli"]
-[ext_resource type="Texture2D" uid="uid://bu0ppu00nh7wx" path="res://sprites/body-parts/flyhead.png" id="2_0wfyh"]
-[ext_resource type="Texture2D" uid="uid://uryqonnv1686" path="res://sprites/body-parts/hip.png" id="3_tbgi4"]
-[ext_resource type="Texture2D" uid="uid://dpodexdckm0oy" path="res://sprites/body-parts/foot.png" id="4_tefeu"]
-[ext_resource type="Texture2D" uid="uid://dtpux7da2x33f" path="res://sprites/body-parts/leg.png" id="5_o6xl0"]
+[ext_resource type="PackedScene" uid="uid://oth36l7c0wyv" path="res://scenes/Mutant.tscn" id="1_o5qli"]
 
 [node name="Node2D" type="Node2D"]
 
-[node name="Humanoid" type="Node2D" parent="."]
-position = Vector2(536, 278)
-script = ExtResource("1_o5qli")
-hip_sprite = ExtResource("3_tbgi4")
-foot_sprite = ExtResource("4_tefeu")
-segment_sprite = ExtResource("5_o6xl0")
-
-[node name="Head" type="Node2D" parent="Humanoid"]
-
-[node name="Sprite2D" type="Sprite2D" parent="Humanoid/Head"]
-texture = ExtResource("2_0wfyh")
-
-[node name="Body" type="Sprite2D" parent="Humanoid"]
-
-[node name="Legs" type="Node2D" parent="Humanoid"]
+[node name="Mutant" parent="." instance=ExtResource("1_o5qli")]
+position = Vector2(588, 386)
