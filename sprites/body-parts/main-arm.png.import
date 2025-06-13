@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://cekh5el8t17b6"
-path="res://.godot/imported/arm.png-3bcfec8c8a4d4a394c2db96fe565f083.ctex"
+uid="uid://kyl45765gx4s"
+path="res://.godot/imported/main-arm.png-38344cc99ca084ebad0137a6efb89aa2.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://sprites/body-parts/arm.png"
-dest_files=["res://.godot/imported/arm.png-3bcfec8c8a4d4a394c2db96fe565f083.ctex"]
+source_file="res://sprites/body-parts/main-arm.png"
+dest_files=["res://.godot/imported/main-arm.png-38344cc99ca084ebad0137a6efb89aa2.ctex"]
 
 [params]
 

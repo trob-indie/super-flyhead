@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://cekh5el8t17b6"
-path="res://.godot/imported/arm.png-3bcfec8c8a4d4a394c2db96fe565f083.ctex"
+uid="uid://b51eesr5sjgu3"
+path="res://.godot/imported/elbow.png-dd5e02212ddec5b7abb42f2d6c594462.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://sprites/body-parts/arm.png"
-dest_files=["res://.godot/imported/arm.png-3bcfec8c8a4d4a394c2db96fe565f083.ctex"]
+source_file="res://sprites/body-parts/elbow.png"
+dest_files=["res://.godot/imported/elbow.png-dd5e02212ddec5b7abb42f2d6c594462.ctex"]
 
 [params]
 
