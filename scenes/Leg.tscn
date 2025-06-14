@@ -14,7 +14,9 @@ segment_texture = ExtResource("2_2dyfc")
 [node name="SegmentSprites" type="Node2D" parent="."]
 
 [node name="Knee" type="Sprite2D" parent="."]
+z_as_relative = false
 texture = ExtResource("3_pwcaq")
 
 [node name="Foot" type="Sprite2D" parent="."]
+z_as_relative = false
 texture = ExtResource("4_g2pji")

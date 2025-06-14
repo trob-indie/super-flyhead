@@ -4,11 +4,13 @@ extends Node2D
 @onready var hand_sprite = $Hand
 @onready var elbow_sprite = $Elbow
 @onready var segment_sprites = $SegmentSprites
+
 @export var direction := 1.0 # +1 for left arm, -1 for right arm
 @export var shoulder_offset := Vector2.ZERO
-@export var swing_amplitude := 30.0  # How far the arm swings (pixels)
-@export var swing_height := 12.0     # Vertical arc offset
-@export var vertical_amplitude := 10.0  # tweak this for more or less bounce
+@export var swing_amplitude := 30.0
+@export var swing_height := 12.0
+@export var vertical_amplitude := 10.0
+@export var arm_length := 40.0
 
 @export var segment_texture: Texture2D
 @export var upper_length := 30.0
@@ -18,6 +20,7 @@ extends Node2D
 @export var swing_radius := 12.0
 @export var swing_speed := 3.0
 @export var phase_offset := 0.0
+@onready var shoulder_sprite = $Shoulder
 
 var time := 0.0
 
@@ -28,8 +31,8 @@ func _ready():
 
 func _process(delta):
 	time += delta
-	
-	var joints = animate_arms_run(time)
+
+	var joints = animate_arms_walk(time)
 	draw_arm_mesh(joints)
 	update_sprites(joints)
 
@@ -64,7 +67,7 @@ func draw_arm_mesh(points: Array) -> void:
 			dir = (points[i + 1] - points[i]).normalized()
 		elif i > 0:
 			dir = (points[i] - points[i - 1]).normalized()
-		var normal = dir.orthogonal() * (5.0)  # arm_width = 10
+		var normal = dir.orthogonal() * 5.0
 
 		left.append(points[i] - normal)
 		right.insert(0, points[i] + normal)
@@ -77,20 +80,27 @@ func update_sprites(points: Array) -> void:
 	if points.size() != 3:
 		return
 
-	# Hand
 	var hand_pos = mesh.to_global(points[2])
 	var prev_pos = mesh.to_global(points[1])
 	hand_sprite.global_position = hand_pos
 	hand_sprite.rotation = (hand_pos - prev_pos).angle() - PI / 2
+	hand_sprite.z_index = z_index + 1
+	hand_sprite.z_as_relative = false
+	hand_sprite.scale.x = direction
 
-	# Elbow (static rotation)
 	var elbow_pos = mesh.to_global(points[1])
 	elbow_sprite.global_position = elbow_pos
 	elbow_sprite.rotation = 0
 	elbow_sprite.z_index = z_index + 1
 	elbow_sprite.z_as_relative = false
+	
+	var shoulder_pos = mesh.to_global(points[0])
+	shoulder_sprite.global_position = shoulder_pos
+	shoulder_sprite.rotation = (elbow_pos - shoulder_pos).angle() - PI / 2
+	shoulder_sprite.z_index = z_index + 1
+	shoulder_sprite.z_as_relative = false
+	shoulder_sprite.scale.x = -direction
 
-	# Segment coverage
 	var positions := []
 	var from_points = [points[0], points[1]]
 	var to_points = [points[1], points[2]]
@@ -129,79 +139,61 @@ func update_sprites(points: Array) -> void:
 	for i in range(positions.size() - 1, segment_sprites.get_child_count()):
 		segment_sprites.get_child(i).visible = false
 
-func animate_arms_run(time: float) -> Array:
+func animate_arms_walk(time: float) -> Array:
 	var shoulder = shoulder_offset
 	var t = time * swing_speed + phase_offset
+
 	var swing = sin(t)
+	var swing_x = swing * swing_amplitude
+	var swing_y = (1.0 - swing * swing) * vertical_amplitude + arm_length
+	var hand = shoulder + Vector2(swing_x, swing_y)
 
-	# Arc-shaped dip (elbow drops downward in middle of swing only)
-	var dip = (1.0 - pow(swing, 2)) * vertical_amplitude
+	# Elbow midpoint
+	var midpoint = (shoulder + hand) * 0.5
 
-	var elbow_offset = Vector2(
-		swing * swing_amplitude,
-		12 + dip
-	)
-	var elbow = shoulder + elbow_offset
-
-	# Hand stays in front of elbow
-	var hand = elbow + Vector2(5, 20)
+	# Bend strength: 0 when swinging back (swing < 0), -5 when forward (swing > 0)
+	var bend_amount = -5.0 * max(swing, 0.0)  # only bends forward
+	var direction = (hand - shoulder).normalized()
+	var perp = direction.orthogonal()
+	var elbow = midpoint + perp * bend_amount
 
 	return [shoulder, elbow, hand]
 
 func animate_arms_flap_wings(time: float) -> Array:
-	var shoulder = shoulder_offset  # fixed point
+	var shoulder = shoulder_offset
 	var swing = sin(time * swing_speed + phase_offset)
-
-	# Move elbow in a horizontal arc
-	var elbow_x = swing * swing_amplitude * direction
-	var elbow_y = 10  # vertical distance below shoulder (tweak as needed)
-	var elbow = shoulder + Vector2(elbow_x, elbow_y)
-
-	# Hand in front of elbow, slightly down
-	var hand_offset = Vector2(30 * direction, 4)
-	var hand = elbow + hand_offset
-
-	var joints = [shoulder, elbow, hand]
-	return joints
+	var elbow = shoulder + Vector2(swing * swing_amplitude * direction, 10)
+	var hand = elbow + Vector2(30 * direction, 4)
+	return [shoulder, elbow, hand]
 
 func animate_arms_double_punch(time: float) -> Array:
 	var shoulder = shoulder_offset
-
-	# Elbow swings side-to-side under and behind the shoulder
 	var swing = sin(time * swing_speed + phase_offset)
-	var elbow_offset = Vector2(-8 * direction + swing * swing_amplitude * direction, 12)
-	var elbow = shoulder + elbow_offset
-
-	# Hand is horizontally in front of elbow
-	var hand_offset = Vector2(30, 0)
-	var hand = elbow + hand_offset
-
+	var elbow = shoulder + Vector2(-8 * direction + swing * swing_amplitude * direction, 12)
+	var hand = elbow + Vector2(30, 0)
 	return [shoulder, elbow, hand]
 
 func animate_arms_spicy_run(time: float) -> Array:
 	var shoulder = shoulder_offset
 	var t = time * swing_speed + phase_offset
 	var swing = sin(t)
-
-	# Elbow swings left-right from the shoulder, no direction applied
-	var elbow_offset = Vector2(swing * swing_amplitude, 12)
-	var elbow = shoulder + elbow_offset
-
-	# Hand always in front of elbow, but mirrored per arm
+	var elbow = shoulder + Vector2(swing * swing_amplitude, 12)
 	var hand = elbow + Vector2(30 * direction, 0)
-
 	return [shoulder, elbow, hand]
 
 func animate_arms_power_walk(time: float) -> Array:
 	var shoulder = shoulder_offset
 	var t = time * swing_speed + phase_offset
 	var swing = sin(t)
-
-	# Elbow swings left-right from the shoulder, no direction applied
-	var elbow_offset = Vector2(swing * swing_amplitude, 12)
-	var elbow = shoulder + elbow_offset
-
-	# Hand always in front of elbow, but mirrored per arm
+	var elbow = shoulder + Vector2(swing * swing_amplitude, 12)
 	var hand = elbow + Vector2(30, 0)
+	return [shoulder, elbow, hand]
 
+func animate_arms_big_man(time: float) -> Array:
+	var shoulder = shoulder_offset
+	var t = time * swing_speed + phase_offset
+	var swing = sin(t)
+	var dip = (1.0 - pow(swing, 2)) * vertical_amplitude
+	var elbow = shoulder + Vector2(swing * swing_amplitude, 12 + dip)
+	var hand = elbow + Vector2(5, 20)
 	return [shoulder, elbow, hand]

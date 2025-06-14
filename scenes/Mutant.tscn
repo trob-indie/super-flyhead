@@ -12,6 +12,7 @@ position = Vector2(-7, -141)
 
 [node name="Sprite2D" type="Sprite2D" parent="Head"]
 z_index = 100
+z_as_relative = false
 texture = ExtResource("1_2seat")
 
 [node name="Arms" type="Node2D" parent="."]
@@ -19,12 +20,14 @@ position = Vector2(-6, 50)
 
 [node name="Arm0" parent="Arms" instance=ExtResource("2_6jjvk")]
 z_index = 90
+z_as_relative = false
 position = Vector2(-10, -158)
 direction = -1.0
 swing_speed = 8.0
 
 [node name="Arm1" parent="Arms" instance=ExtResource("2_6jjvk")]
-z_index = 70
+z_index = 60
+z_as_relative = false
 position = Vector2(11, -159)
 swing_speed = 8.0
 phase_offset = 3.142
@@ -45,6 +48,6 @@ position = Vector2(6, 2)
 phase_offset = 3.142
 
 [node name="Leg1" parent="Legs" instance=ExtResource("2_i3og1")]
-z_index = 80
+z_index = 85
 z_as_relative = false
 position = Vector2(-8, 1)
