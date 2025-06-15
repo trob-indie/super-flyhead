@@ -1,24 +1,37 @@
-extends Node2D
+extends CharacterBody2D
 
-#@export var num_legs: int = 2
-#@export var leg_length: float = 50.0
-#@export var num_segments: int = 3
-#@export var segment_spacing: float = 12.0
-#
-#@export var stride_amplitude: float = 8.0
-#@export var lift_amplitude: float = 4.0
-#@export var run_speed: float = 8.0
-#
-#@export var hip_sprite: Texture2D
-#@export var foot_sprite: Texture2D
-#@export var segment_sprite: Texture2D
-#
-#var time: float = 0.0
+@export var gravity := 800.0  # pixels per second squared
+@export var max_fall_speed := 1200.0
+@export var move_speed := 100.0
 
-var segment_shader := preload("res://shaders/segment_blend.gdshader")
+@onready var right_arm = $Visual/Arms/Arm0
+@onready var left_arm = $Visual/Arms/Arm1
+@onready var right_leg = $Visual/Legs/Leg0
+@onready var left_leg = $Visual/Legs/Leg1
+@onready var visual = $Visual
 
-func _ready():
-	pass
+var facing_right := true
 
-func _process(delta):
-	pass
+func _physics_process(delta):
+	# Apply gravity	
+	if not is_on_floor():
+		velocity.y += gravity * delta
+		velocity.y = min(velocity.y, max_fall_speed)
+	else:
+		velocity.y = 0.0
+	
+	var input_left = Input.is_action_pressed("move_left")
+	var input_right = Input.is_action_pressed("move_right")
+	
+	velocity.x = 0.0
+	if input_right and not input_left:
+		facing_right = true
+		velocity.x = move_speed
+	elif input_left and not input_right:
+		facing_right = false
+		velocity.x = -move_speed
+	
+	visual.scale.x = 1 if facing_right else -1
+	
+	# Move and slide handles collisions
+	move_and_slide()

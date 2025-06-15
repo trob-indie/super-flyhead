@@ -88,7 +88,7 @@ func update_sprites(points: Array) -> void:
 	hand_sprite.z_as_relative = false
 	hand_sprite.scale.x = direction
 
-	var elbow_pos = mesh.to_global(points[1])
+	var elbow_pos = mesh.to_global(Vector2(points[1].x + direction*2.5, points[1].y + 0.5))
 	elbow_sprite.global_position = elbow_pos
 	elbow_sprite.rotation = 0
 	elbow_sprite.z_index = z_index + 1
@@ -153,8 +153,8 @@ func animate_arms_walk(time: float) -> Array:
 
 	# Bend strength: 0 when swinging back (swing < 0), -5 when forward (swing > 0)
 	var bend_amount = -5.0 * max(swing, 0.0)  # only bends forward
-	var direction = (hand - shoulder).normalized()
-	var perp = direction.orthogonal()
+	var arm_direction = (hand - shoulder).normalized()
+	var perp = arm_direction.orthogonal()
 	var elbow = midpoint + perp * bend_amount
 
 	return [shoulder, elbow, hand]

@@ -6,6 +6,7 @@ extends Node2D
 @onready var segment_sprites = $SegmentSprites
 @export var segment_texture: Texture2D
 
+@export var direction := 1.0 # +1 = right, -1 = left
 @export var upper_length := 25.0
 @export var lower_length := 25.0
 @export var leg_width := 1.0
@@ -25,10 +26,11 @@ func _ready():
 func _process(delta):
 	time += delta
 	
-	# Animate foot target in a small circle
+	# Animate foot target in a small circle, mirrored by direction
 	var angle = time * walk_speed + phase_offset
 	var foot_offset = Vector2(cos(angle), sin(angle)) * walk_radius
 	var animated_target = foot_target + foot_offset
+	animated_target.x *= direction
 
 	var joints = solve_ik(Vector2.ZERO, animated_target, upper_length, lower_length)
 	draw_leg_mesh(joints)
@@ -38,7 +40,7 @@ func solve_ik(hip: Vector2, target: Vector2, upper_len: float, lower_len: float)
 	var to_target = target - hip
 	var dist = clamp(to_target.length(), 0.001, upper_len + lower_len)
 	var base_angle = to_target.angle()
-	
+
 	var a = upper_len
 	var b = lower_len
 	var c = dist
@@ -133,10 +135,10 @@ func update_sprites(points: Array) -> void:
 	foot_sprite.rotation = (foot_pos - prev_pos).angle() - PI / 2
 	foot_sprite.z_index = z_index + 1
 	foot_sprite.z_as_relative = false
-	
+
 	# Position knee
 	var knee_pos = mesh.to_global(points[1])
 	knee_sprite.global_position = knee_pos
-	knee_sprite.rotation = 0  # static rotation
+	knee_sprite.rotation = 0
 	knee_sprite.z_index = z_index + 1
 	knee_sprite.z_as_relative = false
