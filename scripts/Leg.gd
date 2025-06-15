@@ -7,6 +7,7 @@ extends Node2D
 @export var segment_texture: Texture2D
 
 @export var direction := 1.0 # +1 = right, -1 = left
+var facing_right := true
 @export var upper_length := 25.0
 @export var lower_length := 25.0
 @export var leg_width := 1.0
@@ -133,6 +134,12 @@ func update_sprites(points: Array) -> void:
 	var prev_pos = mesh.to_global(points[1])
 	foot_sprite.global_position = foot_pos
 	foot_sprite.rotation = (foot_pos - prev_pos).angle() - PI / 2
+	if facing_right:
+		foot_sprite.rotation = (foot_pos - prev_pos).angle() - PI / 2
+	else:
+		var delta = foot_pos - prev_pos
+		delta.x *= -1
+		foot_sprite.rotation = delta.angle() - PI / 2
 	foot_sprite.z_index = z_index + 1
 	foot_sprite.z_as_relative = false
 

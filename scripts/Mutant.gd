@@ -32,6 +32,10 @@ func _physics_process(delta):
 		velocity.x = -move_speed
 	
 	visual.scale.x = 1 if facing_right else -1
+	right_arm.facing_right = facing_right
+	left_arm.facing_right = facing_right
+	right_leg.facing_right = facing_right
+	left_leg.facing_right = facing_right
 	
 	# Move and slide handles collisions
 	move_and_slide()

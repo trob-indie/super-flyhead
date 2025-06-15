@@ -6,6 +6,7 @@ extends Node2D
 @onready var segment_sprites = $SegmentSprites
 
 @export var direction := 1.0 # +1 for left arm, -1 for right arm
+var facing_right := true
 @export var shoulder_offset := Vector2.ZERO
 @export var swing_amplitude := 30.0
 @export var swing_height := 12.0
@@ -83,7 +84,12 @@ func update_sprites(points: Array) -> void:
 	var hand_pos = mesh.to_global(points[2])
 	var prev_pos = mesh.to_global(points[1])
 	hand_sprite.global_position = hand_pos
-	hand_sprite.rotation = (hand_pos - prev_pos).angle() - PI / 2
+	if facing_right:
+		hand_sprite.rotation = (hand_pos - prev_pos).angle() - PI / 2
+	else:
+		var delta = hand_pos - prev_pos
+		delta.x *= -1
+		hand_sprite.rotation = delta.angle() - PI / 2
 	hand_sprite.z_index = z_index + 1
 	hand_sprite.z_as_relative = false
 	hand_sprite.scale.x = direction
@@ -96,7 +102,12 @@ func update_sprites(points: Array) -> void:
 	
 	var shoulder_pos = mesh.to_global(points[0])
 	shoulder_sprite.global_position = shoulder_pos
-	shoulder_sprite.rotation = (elbow_pos - shoulder_pos).angle() - PI / 2
+	if facing_right:
+		shoulder_sprite.rotation = (elbow_pos - shoulder_pos).angle() - PI / 2
+	else:
+		var delta = elbow_pos - shoulder_pos
+		delta.x *= -1
+		shoulder_sprite.rotation = delta.angle() - PI / 2
 	shoulder_sprite.z_index = z_index + 1
 	shoulder_sprite.z_as_relative = false
 	shoulder_sprite.scale.x = -direction
