@@ -55,24 +55,35 @@ func _process(delta):
 
 	if animation_state == "walk":
 		blend_amount = clamp(blend_amount + delta * blend_speed, 0.0, 1.0)
-	else:
+	elif animation_state == "idle":
 		blend_amount = clamp(blend_amount - delta * blend_speed, 0.0, 1.0)
 
-	var walk_pose = animate_limb_walk(time)
-	var idle_pose = animate_limb_idle(time)
-
-	# Blend each joint between idle and walk
 	var joints = []
-	for i in range(idle_pose.size()):
-		var blended = idle_pose[i].lerp(walk_pose[i], blend_amount)
-		joints.append(blended)
+	if animation_state == "jump":
+		joints = animate_limb_jump(time)
+	else:
+		var walk_pose = animate_limb_walk(time)
+		var idle_pose = animate_limb_idle(time)
+		
+		# Blend each joint between idle and walk
+		for i in range(idle_pose.size()):
+			var blended = idle_pose[i].lerp(walk_pose[i], blend_amount)
+			joints.append(blended)
+	
 	draw_limb_mesh(joints)
 	update_sprites(joints)
 
 func animate_limb(time: float) -> Array:
-	if animation_state == "walk":
-		return animate_limb_walk(time)
-	return animate_limb_idle(time)
+	print(animation_state)
+	match animation_state:
+		"walk":
+			return animate_limb_walk(time)
+		"jump":
+			return animate_limb_jump(time)
+		"idle":
+			return animate_limb_idle(time)
+		_:
+			return animate_limb_idle(time)
 
 func animate_limb_walk(time: float) -> Array:
 	if limb_type == "arm":
@@ -117,6 +128,23 @@ func animate_leg_idle(time: float) -> Array:
 	var origin = Vector2.ZERO
 	var target = foot_target
 	return solve_ik(origin, target, upper_length, lower_length)
+
+func animate_limb_jump(time: float) -> Array:
+	if limb_type == "arm":
+		return animate_arm_jump(time)
+	else:
+		return animate_leg_jump(time)
+
+func animate_arm_jump(time: float) -> Array:
+	var shoulder = shoulder_offset
+	var hand = shoulder + Vector2(0, arm_length - 10.0)
+	var elbow = (shoulder + hand) * 0.5 + Vector2(5 * direction, -5)
+	return [shoulder, elbow, hand]
+
+func animate_leg_jump(time: float) -> Array:
+	var origin = Vector2.ZERO
+	var foot = foot_target + Vector2(0, -10)  # pull legs up slightly
+	return solve_ik(origin, foot, upper_length, lower_length)
 
 func solve_ik(origin: Vector2, target: Vector2, upper_len: float, lower_len: float) -> Array:
 	var to_target = target - origin

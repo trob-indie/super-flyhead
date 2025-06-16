@@ -1,8 +1,9 @@
 extends CharacterBody2D
 
-@export var gravity := 800.0  # pixels per second squared
+@export var gravity := 981.0
 @export var max_fall_speed := 1200.0
-@export var move_speed := 100.0
+@export var move_speed := 200.0
+@export var jump_force := 500.0
 
 @onready var right_arm = $Visual/Arms/Arm0
 @onready var left_arm = $Visual/Arms/Arm1
@@ -13,16 +14,19 @@ extends CharacterBody2D
 var facing_right := true
 
 func _physics_process(delta):
+	var input_left = Input.is_action_pressed("move_left")
+	var input_right = Input.is_action_pressed("move_right")
+	var input_jump = Input.is_action_just_pressed("jump")
+
 	# Apply gravity
 	if not is_on_floor():
 		velocity.y += gravity * delta
 		velocity.y = min(velocity.y, max_fall_speed)
 	else:
-		velocity.y = 0.0
+		if input_jump:
+			velocity.y = -jump_force
 
-	var input_left = Input.is_action_pressed("move_left")
-	var input_right = Input.is_action_pressed("move_right")
-
+	# Horizontal movement
 	velocity.x = 0.0
 	if input_right and not input_left:
 		facing_right = true
@@ -31,15 +35,16 @@ func _physics_process(delta):
 		facing_right = false
 		velocity.x = -move_speed
 
-	# Update visual orientation
 	visual.scale.x = 1 if facing_right else -1
 
-	# Determine animation mode
-	var moving = input_left != input_right
-	var mode = "walk" if moving else "idle"
-
+	# Update limbs
 	for limb in [right_arm, left_arm, right_leg, left_leg]:
 		limb.facing_right = facing_right
-		limb.animation_state = mode
+		if not is_on_floor():
+			limb.animation_state = "jump"
+		elif velocity.x != 0:
+			limb.animation_state = "walk"
+		else:
+			limb.animation_state = "idle"
 
 	move_and_slide()
