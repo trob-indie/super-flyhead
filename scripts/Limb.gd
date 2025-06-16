@@ -1,5 +1,9 @@
 extends Node2D
 
+@export var animation_state := "idle" # "idle" or "walk"
+var blend_amount = 0.0 # controls how much "influence" the walk animation has
+@export var blend_speed := 4.0  # How quickly to blend between animations
+
 @export var limb_type = "arm"
 @export var direction := 1.0 # +1 for left limb, -1 for right limb
 @export var facing_right := true
@@ -49,30 +53,70 @@ func _ready():
 func _process(delta):
 	time += delta
 
-	var joints = animate_limb(time)
+	if animation_state == "walk":
+		blend_amount = clamp(blend_amount + delta * blend_speed, 0.0, 1.0)
+	else:
+		blend_amount = clamp(blend_amount - delta * blend_speed, 0.0, 1.0)
+
+	var walk_pose = animate_limb_walk(time)
+	var idle_pose = animate_limb_idle(time)
+
+	# Blend each joint between idle and walk
+	var joints = []
+	for i in range(idle_pose.size()):
+		var blended = idle_pose[i].lerp(walk_pose[i], blend_amount)
+		joints.append(blended)
 	draw_limb_mesh(joints)
 	update_sprites(joints)
 
 func animate_limb(time: float) -> Array:
+	if animation_state == "walk":
+		return animate_limb_walk(time)
+	return animate_limb_idle(time)
+
+func animate_limb_walk(time: float) -> Array:
 	if limb_type == "arm":
-		var t = time * swing_speed + phase_offset
-		var swing = sin(t)
-		var swing_x = swing * swing_amplitude
-		var swing_y = (1.0 - swing * swing) * vertical_amplitude + arm_length
-		var shoulder = shoulder_offset
-		var hand = shoulder + Vector2(swing_x, swing_y)
-		var midpoint = (shoulder + hand) * 0.5
-		var bend_amount = -5.0 * max(swing, 0.0)
-		var direction_vec = (hand - shoulder).normalized()
-		var perp = direction_vec.orthogonal()
-		var elbow = midpoint + perp * bend_amount
-		return [shoulder, elbow, hand]
+		return animate_arm_walk(time)
 	else:
-		var angle = time * walk_speed + phase_offset
-		var foot_offset = Vector2(cos(angle), sin(angle)) * walk_radius
-		var animated_target = foot_target + foot_offset
-		animated_target.x *= direction
-		return solve_ik(Vector2.ZERO, animated_target, upper_length, lower_length)
+		return animate_leg_walk(time)
+
+func animate_arm_walk(time: float) -> Array:
+	var t = time * swing_speed + phase_offset
+	var swing = sin(t)
+	var swing_x = swing * swing_amplitude
+	var swing_y = (1.0 - swing * swing) * vertical_amplitude + arm_length
+	var shoulder = shoulder_offset
+	var hand = shoulder + Vector2(swing_x, swing_y)
+	var midpoint = (shoulder + hand) * 0.5
+	var bend_amount = -5.0 * max(swing, 0.0)
+	var direction_vec = (hand - shoulder).normalized()
+	var perp = direction_vec.orthogonal()
+	var elbow = midpoint + perp * bend_amount
+	return [shoulder, elbow, hand]
+
+func animate_leg_walk(time: float) -> Array:
+	var angle = time * walk_speed + phase_offset
+	var foot_offset = Vector2(cos(angle), sin(angle)) * walk_radius
+	var animated_target = foot_target + foot_offset
+	animated_target.x *= direction
+	return solve_ik(Vector2.ZERO, animated_target, upper_length, lower_length)
+
+func animate_limb_idle(time: float) -> Array:
+	if limb_type == "arm":
+		return animate_arm_idle(time)
+	else:
+		return animate_leg_idle(time)
+
+func animate_arm_idle(time: float) -> Array: 
+	var shoulder = shoulder_offset
+	var hand = shoulder + Vector2(0, arm_length + 7.5)
+	var elbow = (shoulder + hand) * 0.5
+	return [shoulder, elbow, hand]
+
+func animate_leg_idle(time: float) -> Array:
+	var origin = Vector2.ZERO
+	var target = foot_target
+	return solve_ik(origin, target, upper_length, lower_length)
 
 func solve_ik(origin: Vector2, target: Vector2, upper_len: float, lower_len: float) -> Array:
 	var to_target = target - origin

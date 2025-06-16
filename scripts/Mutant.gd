@@ -13,16 +13,16 @@ extends CharacterBody2D
 var facing_right := true
 
 func _physics_process(delta):
-	# Apply gravity	
+	# Apply gravity
 	if not is_on_floor():
 		velocity.y += gravity * delta
 		velocity.y = min(velocity.y, max_fall_speed)
 	else:
 		velocity.y = 0.0
-	
+
 	var input_left = Input.is_action_pressed("move_left")
 	var input_right = Input.is_action_pressed("move_right")
-	
+
 	velocity.x = 0.0
 	if input_right and not input_left:
 		facing_right = true
@@ -30,12 +30,16 @@ func _physics_process(delta):
 	elif input_left and not input_right:
 		facing_right = false
 		velocity.x = -move_speed
-	
+
+	# Update visual orientation
 	visual.scale.x = 1 if facing_right else -1
-	right_arm.facing_right = facing_right
-	left_arm.facing_right = facing_right
-	right_leg.facing_right = facing_right
-	left_leg.facing_right = facing_right
-	
-	# Move and slide handles collisions
+
+	# Determine animation mode
+	var moving = input_left != input_right
+	var mode = "walk" if moving else "idle"
+
+	for limb in [right_arm, left_arm, right_leg, left_leg]:
+		limb.facing_right = facing_right
+		limb.animation_state = mode
+
 	move_and_slide()
