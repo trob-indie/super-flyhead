@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://darpgyqwyxbb8"
-path="res://.godot/imported/hip.png-7da00cabcf3ade55d36ed6ceca36cf93.ctex"
+uid="uid://dkfo616rqbrx2"
+path="res://.godot/imported/hand2-left.png-4a707ab26b9b3a63f8cb160805197306.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://sprites/body-parts/hip.png"
-dest_files=["res://.godot/imported/hip.png-7da00cabcf3ade55d36ed6ceca36cf93.ctex"]
+source_file="res://sprites/body-parts/hand2-left.png"
+dest_files=["res://.godot/imported/hand2-left.png-4a707ab26b9b3a63f8cb160805197306.ctex"]
 
 [params]
 

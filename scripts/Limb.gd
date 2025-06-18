@@ -8,25 +8,23 @@ var blend_amount = 0.0 # controls how much "influence" the walk animation has
 @export var direction := 1.0 # +1 for left limb, -1 for right limb
 @export var facing_right := true
 
-# Common kinematics and animation params
-@export var upper_length := 30.0
-@export var lower_length := 30.0
-@export var joint_spacing := 8.0
-
 # Arm-specific
 @export var swing_amplitude := 30.0
 @export var swing_height := 12.0
 @export var vertical_amplitude := 10.0
-@export var arm_length := 40.0
+@export var arm_length := 120.0
 @export var hand_target := Vector2(40, 30)
 @export var swing_radius := 12.0
 @export var swing_speed := 3.0
 @export var shoulder_offset := Vector2.ZERO
 
 # Leg-specific
-@export var foot_target := Vector2(0, 50)
+@export var foot_target := Vector2(0, 100)
 @export var walk_radius := 8.0
 @export var walk_speed := 8.0
+@export var upper_length := 30.0
+@export var lower_length := 30.0
+@export var joint_spacing := 8.0
 
 @export var phase_offset := 0.0
 
