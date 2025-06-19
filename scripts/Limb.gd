@@ -5,6 +5,7 @@ var blend_amount = 0.0 # controls how much "influence" the walk animation has
 @export var blend_speed := 4.0  # How quickly to blend between animations
 
 @export var limb_type = "arm"
+@export var limb_width = 1.0
 @export var direction := 1.0 # +1 for left limb, -1 for right limb
 @export var facing_right := true
 
@@ -97,7 +98,7 @@ func animate_arm_walk(time: float) -> Array:
 	var shoulder = shoulder_offset
 	var hand = shoulder + Vector2(swing_x, swing_y)
 	var midpoint = (shoulder + hand) * 0.5
-	var bend_amount = -5.0 * max(swing, 0.0)
+	var bend_amount = -12.0 * max(swing, 0.0)
 	var direction_vec = (hand - shoulder).normalized()
 	var perp = direction_vec.orthogonal()
 	var elbow = midpoint + perp * bend_amount
@@ -107,7 +108,6 @@ func animate_leg_walk(time: float) -> Array:
 	var angle = time * walk_speed + phase_offset
 	var foot_offset = Vector2(cos(angle), sin(angle)) * walk_radius
 	var animated_target = foot_target + foot_offset
-	animated_target.x *= direction
 	return solve_ik(Vector2.ZERO, animated_target, upper_length, lower_length)
 
 func animate_limb_idle(time: float) -> Array:
@@ -195,7 +195,7 @@ func update_sprites(points: Array) -> void:
 	for i in range(2):
 		var from = from_points[i]
 		var to = to_points[i]
-		var segment_count = max(1, int((to - from).length() / joint_spacing))
+		var segment_count = 1
 
 		for j in range(segment_count):
 			var t = float(j) / segment_count
@@ -218,7 +218,7 @@ func update_sprites(points: Array) -> void:
 		seg.rotation = dir.angle() - PI / 2
 		seg.z_index = z_index
 		seg.z_as_relative = false
-		seg.scale = Vector2(1.0, length / seg.texture.get_height())
+		seg.scale = Vector2(limb_width, length / seg.texture.get_height())
 		seg.visible = true
 
 	for i in range(positions.size() - 1, fill_sprites.get_child_count()):
@@ -240,7 +240,7 @@ func update_sprites_arm(points):
 		var delta = hand_pos - elbow_pos
 		delta.x *= -1
 		lower_joint_sprite_instance.rotation = delta.angle() - PI / 2
-	lower_joint_sprite_instance.scale.x = direction
+	lower_joint_sprite_instance.scale.x = -direction*limb_width
 	lower_joint_sprite_instance.z_index = z_index + 1
 	lower_joint_sprite_instance.z_as_relative = false
 
@@ -248,6 +248,7 @@ func update_sprites_arm(points):
 	middle_joint_sprite_instance.rotation = 0
 	middle_joint_sprite_instance.z_index = z_index - 1
 	middle_joint_sprite_instance.z_as_relative = false
+	middle_joint_sprite_instance.scale.x = limb_width
 
 	if facing_right:
 		upper_joint_sprite_instance.rotation = (elbow_pos - shoulder_pos).angle() - PI / 2
@@ -258,11 +259,12 @@ func update_sprites_arm(points):
 	upper_joint_sprite_instance.global_position = shoulder_pos
 	upper_joint_sprite_instance.z_index = z_index + 1
 	upper_joint_sprite_instance.z_as_relative = false
-	upper_joint_sprite_instance.scale.x = -direction
+	upper_joint_sprite_instance.scale.x = -direction*limb_width
 
 func update_sprites_leg(points):
+	var hip_pos = mesh.to_global(points[0])
 	var knee_pos = mesh.to_global(points[1])
-	var foot_pos = mesh.to_global(points[2])
+	var foot_pos = mesh.to_global(points[2] + Vector2(8, 3))
 	var prev_pos = mesh.to_global(points[1])
 	lower_joint_sprite_instance.global_position = foot_pos
 	lower_joint_sprite_instance.rotation = (foot_pos - prev_pos).angle() - PI / 2
@@ -272,13 +274,26 @@ func update_sprites_leg(points):
 		var delta = foot_pos - prev_pos
 		delta.x *= -1
 		lower_joint_sprite_instance.rotation = delta.angle() - PI / 2
-	lower_joint_sprite_instance.z_index = z_index + 1
+	lower_joint_sprite_instance.z_index = z_index - 1
 	lower_joint_sprite_instance.z_as_relative = false
+	lower_joint_sprite_instance.scale.x = limb_width
 
 	middle_joint_sprite_instance.global_position = knee_pos
 	middle_joint_sprite_instance.rotation = 0
-	middle_joint_sprite_instance.z_index = z_index + 1
+	middle_joint_sprite_instance.z_index = z_index - 1
 	middle_joint_sprite_instance.z_as_relative = false
+	middle_joint_sprite_instance.scale.x = limb_width
+	
+	if facing_right:
+		upper_joint_sprite_instance.rotation = (knee_pos - hip_pos).angle() - PI / 2
+	else:
+		var delta = knee_pos - hip_pos
+		delta.x *= -1
+		upper_joint_sprite_instance.rotation = delta.angle() - PI / 2
+	upper_joint_sprite_instance.global_position = hip_pos
+	upper_joint_sprite_instance.z_index = z_index - 1
+	upper_joint_sprite_instance.z_as_relative = false
+	upper_joint_sprite_instance.scale.x = -direction*limb_width
 
 
 #func animate_arms_flap_wings(time: float) -> Array:

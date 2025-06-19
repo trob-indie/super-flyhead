@@ -1,4 +1,4 @@
-[gd_scene load_steps=15 format=3 uid="uid://oth36l7c0wyv"]
+[gd_scene load_steps=16 format=3 uid="uid://oth36l7c0wyv"]
 
 [ext_resource type="Script" uid="uid://c8s566755sjlx" path="res://scripts/Mutant.gd" id="1_ov4ub"]
 [ext_resource type="Texture2D" uid="uid://dfbvuxfosbqty" path="res://sprites/body-parts/flyhead2.png" id="2_bs8cr"]
@@ -11,17 +11,18 @@
 [ext_resource type="Texture2D" uid="uid://dkfo616rqbrx2" path="res://sprites/body-parts/hand2-left.png" id="9_bs8cr"]
 [ext_resource type="Texture2D" uid="uid://d328hr556ddep" path="res://sprites/body-parts/foot2.png" id="9_i57ft"]
 [ext_resource type="Texture2D" uid="uid://dgwgl1ummkip5" path="res://sprites/body-parts/knee2.png" id="10_51k1n"]
-[ext_resource type="Texture2D" uid="uid://dd51ab3k33xbq" path="res://sprites/body-parts/hip2.png" id="11_gclwr"]
+[ext_resource type="Texture2D" uid="uid://do63528o7mut3" path="res://sprites/body-parts/hip_front.png" id="12_iprrb"]
 [ext_resource type="Texture2D" uid="uid://2amsx3bguhmg" path="res://sprites/body-parts/leg2.png" id="12_ph3qc"]
+[ext_resource type="Texture2D" uid="uid://cwq254yj4mno7" path="res://sprites/body-parts/hip_back.png" id="14_i57ft"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_ov4ub"]
-size = Vector2(56, 160)
+size = Vector2(83, 339)
 
 [node name="Mutant" type="CharacterBody2D"]
 script = ExtResource("1_ov4ub")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-position = Vector2(-4, -89)
+position = Vector2(-1.5, -85.5)
 shape = SubResource("RectangleShape2D_ov4ub")
 
 [node name="Visual" type="Node2D" parent="."]
@@ -47,6 +48,8 @@ z_index = 90
 z_as_relative = false
 position = Vector2(-40, -200)
 direction = -1.0
+swing_amplitude = 40.0
+vertical_amplitude = 12.0
 swing_radius = 16.0
 swing_speed = 10.0
 walk_speed = 10.0
@@ -59,6 +62,8 @@ fill_texture = ExtResource("7_iprrb")
 z_index = 50
 z_as_relative = false
 position = Vector2(41, -200)
+swing_amplitude = 40.0
+vertical_amplitude = 12.0
 swing_radius = 16.0
 swing_speed = 10.0
 walk_speed = 10.0
@@ -81,7 +86,7 @@ position = Vector2(0, -71)
 [node name="Leg0" parent="Visual/Legs" instance=ExtResource("6_kxl4y")]
 z_index = 80
 z_as_relative = false
-position = Vector2(-31, 61)
+position = Vector2(-18, 61)
 limb_type = "leg"
 walk_radius = 16.0
 walk_speed = 10.0
@@ -90,19 +95,20 @@ lower_length = 60.0
 phase_offset = 3.142
 lower_joint_sprite = ExtResource("9_i57ft")
 middle_joint_sprite = ExtResource("10_51k1n")
-upper_joint_sprite = ExtResource("11_gclwr")
+upper_joint_sprite = ExtResource("12_iprrb")
 fill_texture = ExtResource("12_ph3qc")
 
 [node name="Leg1" parent="Visual/Legs" instance=ExtResource("6_kxl4y")]
 z_index = 70
 z_as_relative = false
-position = Vector2(23, 56)
+position = Vector2(22, 53)
 limb_type = "leg"
+direction = -1.0
 walk_radius = 16.0
 walk_speed = 10.0
 upper_length = 40.0
 lower_length = 60.0
 lower_joint_sprite = ExtResource("9_i57ft")
 middle_joint_sprite = ExtResource("10_51k1n")
-upper_joint_sprite = ExtResource("11_gclwr")
+upper_joint_sprite = ExtResource("14_i57ft")
 fill_texture = ExtResource("12_ph3qc")
