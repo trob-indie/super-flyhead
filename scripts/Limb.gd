@@ -141,7 +141,7 @@ func animate_arm_jump(time: float) -> Array:
 
 func animate_leg_jump(time: float) -> Array:
 	var origin = Vector2.ZERO
-	var foot = foot_target + Vector2(0, -10)  # pull legs up slightly
+	var foot = foot_target + Vector2(0, 0)  # pull legs up slightly
 	return solve_ik(origin, foot, upper_length, lower_length)
 
 func solve_ik(origin: Vector2, target: Vector2, upper_len: float, lower_len: float) -> Array:

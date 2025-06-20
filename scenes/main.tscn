@@ -1,6 +1,7 @@
-[gd_scene load_steps=3 format=3 uid="uid://d1k1x3tnec2lj"]
+[gd_scene load_steps=4 format=3 uid="uid://d1k1x3tnec2lj"]
 
 [ext_resource type="PackedScene" uid="uid://oth36l7c0wyv" path="res://scenes/Mutant.tscn" id="1_o5qli"]
+[ext_resource type="PackedScene" uid="uid://cjpgyep538ta1" path="res://scenes/Head.tscn" id="2_0wfyh"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_o5qli"]
 size = Vector2(1149, 96)
@@ -9,6 +10,7 @@ size = Vector2(1149, 96)
 
 [node name="Mutant" parent="." instance=ExtResource("1_o5qli")]
 position = Vector2(588, 386)
+detached_head_scene = ExtResource("2_0wfyh")
 
 [node name="StaticBody2D" type="StaticBody2D" parent="."]
 
