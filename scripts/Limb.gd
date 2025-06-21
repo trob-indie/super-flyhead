@@ -266,15 +266,18 @@ func update_sprites_leg(points):
 	var knee_pos = mesh.to_global(points[1])
 	var foot_pos = mesh.to_global(points[2] + Vector2(8, 3))
 	var prev_pos = mesh.to_global(points[1])
-	lower_joint_sprite_instance.global_position = foot_pos
-	lower_joint_sprite_instance.rotation = (foot_pos - prev_pos).angle() - PI / 2
+	
+	var offset_coefficient = 1.0
+	if !facing_right:
+		offset_coefficient *= -1.0
+	lower_joint_sprite_instance.global_position = foot_pos + Vector2(offset_coefficient*2.25, 6.0)
 	if facing_right:
-		lower_joint_sprite_instance.rotation = (foot_pos - prev_pos).angle() - PI / 2
+		lower_joint_sprite_instance.rotation = (foot_pos - prev_pos).angle() - (PI / 2) + 0.1
 	else:
 		var delta = foot_pos - prev_pos
 		delta.x *= -1
-		lower_joint_sprite_instance.rotation = delta.angle() - PI / 2
-	lower_joint_sprite_instance.z_index = z_index - 1
+		lower_joint_sprite_instance.rotation = delta.angle() - PI / 2 + 0.1
+	lower_joint_sprite_instance.z_index = z_index + 1
 	lower_joint_sprite_instance.z_as_relative = false
 	lower_joint_sprite_instance.scale.x = limb_width
 

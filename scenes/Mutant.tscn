@@ -46,7 +46,7 @@ position = Vector2(-6, 50)
 [node name="Arm0" parent="Visual/Arms" instance=ExtResource("6_kxl4y")]
 z_index = 90
 z_as_relative = false
-position = Vector2(-40, -200)
+position = Vector2(-38, -196)
 direction = -1.0
 swing_amplitude = 40.0
 vertical_amplitude = 12.0
@@ -62,7 +62,7 @@ fill_texture = ExtResource("7_iprrb")
 [node name="Arm1" parent="Visual/Arms" instance=ExtResource("6_kxl4y")]
 z_index = 50
 z_as_relative = false
-position = Vector2(41, -200)
+position = Vector2(43, -196)
 swing_amplitude = 40.0
 vertical_amplitude = 12.0
 swing_radius = 16.0
@@ -86,7 +86,7 @@ position = Vector2(0, -71)
 [node name="Leg0" parent="Visual/Legs" instance=ExtResource("6_kxl4y")]
 z_index = 80
 z_as_relative = false
-position = Vector2(-18, 61)
+position = Vector2(-16, 58)
 limb_type = "leg"
 walk_radius = 16.0
 upper_length = 40.0
