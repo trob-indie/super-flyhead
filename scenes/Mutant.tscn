@@ -20,6 +20,7 @@
 size = Vector2(83, 339)
 
 [node name="Mutant" type="CharacterBody2D"]
+collision_mask = 129
 script = ExtResource("1_ov4ub")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]

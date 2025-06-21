@@ -57,6 +57,15 @@ func _ready():
 
 func _process(delta):
 	time += delta
+	
+	if animation_state == "collapse":
+		var joints = []
+		if limb_type == "leg":
+			joints = animate_leg_collapse(time)
+		draw_limb_mesh(joints)
+		update_sprites(joints)
+		return
+
 
 	if animation_state == "walk":
 		blend_amount = clamp(blend_amount + delta * blend_speed, 0.0, 1.0)
@@ -77,18 +86,6 @@ func _process(delta):
 	
 	draw_limb_mesh(joints)
 	update_sprites(joints)
-
-func animate_limb(time: float) -> Array:
-	print(animation_state)
-	match animation_state:
-		"walk":
-			return animate_limb_walk(time)
-		"jump":
-			return animate_limb_jump(time)
-		"idle":
-			return animate_limb_idle(time)
-		_:
-			return animate_limb_idle(time)
 
 func animate_limb_walk(time: float) -> Array:
 	if limb_type == "arm":
@@ -149,6 +146,17 @@ func animate_leg_jump(time: float) -> Array:
 	var origin = Vector2.ZERO
 	var foot = foot_target + Vector2(0, 0)  # pull legs up slightly
 	return solve_ik(origin, foot, upper_length, lower_length)
+
+func animate_leg_collapse(time: float) -> Array:
+	var origin = Vector2.ZERO
+	var thigh_dir = Vector2(0, 1)
+	
+	var knee_offset = Vector2(40, -50)  # move knee forward
+	var shin_dir = Vector2(-0.5, 1).normalized()
+
+	var knee = origin + thigh_dir * upper_length + knee_offset
+	var foot = knee + shin_dir * lower_length
+	return [origin, knee, foot]
 
 func solve_ik(origin: Vector2, target: Vector2, upper_len: float, lower_len: float) -> Array:
 	var to_target = target - origin
