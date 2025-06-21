@@ -1,0 +1,8 @@
+[gd_resource type="ShaderMaterial" load_steps=2 format=3 uid="uid://tetx7113bb0j"]
+
+[ext_resource type="Shader" uid="uid://b5pdhhu3hpamu" path="res://shaders/border_bottom.gdshader" id="1_ssm62"]
+
+[resource]
+shader = ExtResource("1_ssm62")
+shader_parameter/line_color = Color(0, 0, 0, 1)
+shader_parameter/line_height = 16

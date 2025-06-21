@@ -26,6 +26,8 @@ var blend_amount = 0.0 # controls how much "influence" the walk animation has
 @export var upper_length := 30.0
 @export var lower_length := 30.0
 @export var joint_spacing := 8.0
+@export var bottom_border_shader: Shader
+var bottom_border_shader_material: ShaderMaterial
 
 @export var phase_offset := 0.0
 
@@ -48,6 +50,10 @@ func _ready():
 	lower_joint_sprite_instance.texture = lower_joint_sprite
 	middle_joint_sprite_instance.texture = middle_joint_sprite
 	upper_joint_sprite_instance.texture = upper_joint_sprite
+	
+	if bottom_border_shader:
+		bottom_border_shader_material = ShaderMaterial.new()
+		bottom_border_shader_material.shader = bottom_border_shader
 
 func _process(delta):
 	time += delta
@@ -224,6 +230,11 @@ func update_sprites(points: Array) -> void:
 	for i in range(positions.size() - 1, fill_sprites.get_child_count()):
 		fill_sprites.get_child(i).visible = false
 
+	if positions.size() > 1:
+		var last_sprite = fill_sprites.get_child(positions.size() - 2) as Sprite2D
+		if bottom_border_shader_material:
+			last_sprite.material = bottom_border_shader_material
+
 	if limb_type == "arm":
 		update_sprites_arm(points)
 	elif limb_type == "leg":
@@ -232,7 +243,7 @@ func update_sprites(points: Array) -> void:
 func update_sprites_arm(points):
 	var shoulder_pos = mesh.to_global(points[0])
 	var elbow_pos = mesh.to_global(Vector2(points[1].x + direction*2.5, points[1].y + 0.5))
-	var hand_pos = mesh.to_global(points[2])
+	var hand_pos = mesh.to_global(points[2]) + Vector2(0.0, 2.0)
 	lower_joint_sprite_instance.global_position = hand_pos
 	if facing_right:
 		lower_joint_sprite_instance.rotation = (hand_pos - elbow_pos).angle() - PI / 2
@@ -241,7 +252,7 @@ func update_sprites_arm(points):
 		delta.x *= -1
 		lower_joint_sprite_instance.rotation = delta.angle() - PI / 2
 	lower_joint_sprite_instance.scale.x = -direction*limb_width
-	lower_joint_sprite_instance.z_index = z_index + 1
+	lower_joint_sprite_instance.z_index = z_index - 1
 	lower_joint_sprite_instance.z_as_relative = false
 
 	middle_joint_sprite_instance.global_position = elbow_pos
@@ -267,17 +278,14 @@ func update_sprites_leg(points):
 	var foot_pos = mesh.to_global(points[2] + Vector2(8, 3))
 	var prev_pos = mesh.to_global(points[1])
 	
-	var offset_coefficient = 1.0
-	if !facing_right:
-		offset_coefficient *= -1.0
-	lower_joint_sprite_instance.global_position = foot_pos + Vector2(offset_coefficient*2.25, 6.0)
+	lower_joint_sprite_instance.global_position = foot_pos + Vector2(0.0, 4.0)
 	if facing_right:
 		lower_joint_sprite_instance.rotation = (foot_pos - prev_pos).angle() - (PI / 2) + 0.1
 	else:
 		var delta = foot_pos - prev_pos
 		delta.x *= -1
 		lower_joint_sprite_instance.rotation = delta.angle() - PI / 2 + 0.1
-	lower_joint_sprite_instance.z_index = z_index + 1
+	lower_joint_sprite_instance.z_index = z_index - 1
 	lower_joint_sprite_instance.z_as_relative = false
 	lower_joint_sprite_instance.scale.x = limb_width
 

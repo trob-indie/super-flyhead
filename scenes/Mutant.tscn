@@ -1,4 +1,4 @@
-[gd_scene load_steps=16 format=3 uid="uid://oth36l7c0wyv"]
+[gd_scene load_steps=17 format=3 uid="uid://oth36l7c0wyv"]
 
 [ext_resource type="Script" uid="uid://c8s566755sjlx" path="res://scripts/Mutant.gd" id="1_ov4ub"]
 [ext_resource type="Texture2D" uid="uid://dfbvuxfosbqty" path="res://sprites/body-parts/flyhead2.png" id="2_bs8cr"]
@@ -11,6 +11,7 @@
 [ext_resource type="Texture2D" uid="uid://dkfo616rqbrx2" path="res://sprites/body-parts/hand2-left.png" id="9_bs8cr"]
 [ext_resource type="Texture2D" uid="uid://d328hr556ddep" path="res://sprites/body-parts/foot2.png" id="9_i57ft"]
 [ext_resource type="Texture2D" uid="uid://dgwgl1ummkip5" path="res://sprites/body-parts/knee2.png" id="10_51k1n"]
+[ext_resource type="Shader" uid="uid://b5pdhhu3hpamu" path="res://shaders/border_bottom.gdshader" id="10_iprrb"]
 [ext_resource type="Texture2D" uid="uid://do63528o7mut3" path="res://sprites/body-parts/hip_front.png" id="12_iprrb"]
 [ext_resource type="Texture2D" uid="uid://2amsx3bguhmg" path="res://sprites/body-parts/leg2.png" id="12_ph3qc"]
 [ext_resource type="Texture2D" uid="uid://cwq254yj4mno7" path="res://sprites/body-parts/hip_back.png" id="14_i57ft"]
@@ -31,7 +32,7 @@ z_as_relative = false
 [node name="Head" type="Node2D" parent="Visual"]
 z_index = 100
 z_as_relative = false
-position = Vector2(-4, -229)
+position = Vector2(-4, -226)
 
 [node name="Sprite2D" type="Sprite2D" parent="Visual/Head"]
 z_index = 100
@@ -53,6 +54,7 @@ vertical_amplitude = 12.0
 swing_radius = 16.0
 swing_speed = 8.0
 walk_speed = 10.0
+bottom_border_shader = ExtResource("10_iprrb")
 phase_offset = 3.142
 lower_joint_sprite = ExtResource("4_bs8cr")
 middle_joint_sprite = ExtResource("5_gaknu")
@@ -68,6 +70,7 @@ vertical_amplitude = 12.0
 swing_radius = 16.0
 swing_speed = 8.0
 walk_speed = 10.0
+bottom_border_shader = ExtResource("10_iprrb")
 lower_joint_sprite = ExtResource("9_bs8cr")
 middle_joint_sprite = ExtResource("5_gaknu")
 upper_joint_sprite = ExtResource("6_t5nmj")
@@ -91,6 +94,7 @@ limb_type = "leg"
 walk_radius = 16.0
 upper_length = 40.0
 lower_length = 60.0
+bottom_border_shader = ExtResource("10_iprrb")
 phase_offset = 3.142
 lower_joint_sprite = ExtResource("9_i57ft")
 middle_joint_sprite = ExtResource("10_51k1n")
@@ -106,6 +110,7 @@ direction = -1.0
 walk_radius = 16.0
 upper_length = 40.0
 lower_length = 60.0
+bottom_border_shader = ExtResource("10_iprrb")
 lower_joint_sprite = ExtResource("9_i57ft")
 middle_joint_sprite = ExtResource("10_51k1n")
 upper_joint_sprite = ExtResource("14_i57ft")
