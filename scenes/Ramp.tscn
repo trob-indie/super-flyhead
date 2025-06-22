@@ -1,0 +1,24 @@
+[gd_scene load_steps=4 format=3 uid="uid://da1v4sq3wnp22"]
+
+[ext_resource type="Texture2D" uid="uid://dh5gjfv66tdrp" path="res://sprites/ramp.png" id="1_08jc4"]
+[ext_resource type="Script" uid="uid://chcvweslq1dwb" path="res://scripts/Ramp.gd" id="1_iys31"]
+
+[sub_resource type="Curve2D" id="Curve2D_gp0bm"]
+_data = {
+"points": PackedVector2Array(-381.325, -34.9372, 381.325, 34.9372, -221, 210, 3.00168, 158.418, -3.00168, -158.418, 210, -222)
+}
+point_count = 2
+
+[node name="Ramp" type="StaticBody2D"]
+collision_layer = 128
+collision_mask = 3
+script = ExtResource("1_iys31")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+scale = Vector2(3, 3)
+texture = ExtResource("1_08jc4")
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="."]
+
+[node name="Path2D" type="Path2D" parent="."]
+curve = SubResource("Curve2D_gp0bm")

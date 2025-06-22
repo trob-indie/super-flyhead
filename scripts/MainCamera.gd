@@ -21,6 +21,5 @@ func _process(delta):
 	global_position = global_position.lerp(target_position, delta * follow_speed)
 
 func _on_head_detached(new_head):
-	print("oh shit wat up")
 	if new_head:
 		target_node = new_head

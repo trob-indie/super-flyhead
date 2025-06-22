@@ -1,6 +1,6 @@
 extends RigidBody2D
 
-@export var max_speed := 500.0
+@export var max_speed := 1000.0
 @export var acceleration := 800.0
 @export var gravity := 981.0
 
