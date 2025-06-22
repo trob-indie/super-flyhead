@@ -3,18 +3,18 @@
 [ext_resource type="Script" uid="uid://c8s566755sjlx" path="res://scripts/Mutant.gd" id="1_ov4ub"]
 [ext_resource type="Texture2D" uid="uid://dfbvuxfosbqty" path="res://sprites/body-parts/flyhead2.png" id="2_bs8cr"]
 [ext_resource type="Texture2D" uid="uid://br5uvkj76chjg" path="res://sprites/body-parts/hand2.png" id="4_bs8cr"]
-[ext_resource type="Texture2D" uid="uid://4nhl4srsg8cu" path="res://sprites/body-parts/elbow2.png" id="5_gaknu"]
+[ext_resource type="Texture2D" uid="uid://csopwg1ljirjf" path="res://sprites/body-parts/variants/arm2_white.png" id="6_iprrb"]
 [ext_resource type="PackedScene" uid="uid://c1q42i3avb2fr" path="res://scenes/Limb.tscn" id="6_kxl4y"]
-[ext_resource type="Texture2D" uid="uid://dvxjc60vwn2gx" path="res://sprites/body-parts/shoulder2.png" id="6_t5nmj"]
-[ext_resource type="Texture2D" uid="uid://c0gnvndo4kvpn" path="res://sprites/body-parts/arm2.png" id="7_iprrb"]
-[ext_resource type="Texture2D" uid="uid://bgmbfuu650iir" path="res://sprites/body-parts/torso2.png" id="8_dxt8y"]
+[ext_resource type="Texture2D" uid="uid://bqr7hag76j6ms" path="res://sprites/body-parts/variants/shoulder2_white.png" id="7_dxt8y"]
+[ext_resource type="Texture2D" uid="uid://cui4jpicc7fa2" path="res://sprites/body-parts/variants/leg2_white.png" id="8_i57ft"]
 [ext_resource type="Texture2D" uid="uid://dkfo616rqbrx2" path="res://sprites/body-parts/hand2-left.png" id="9_bs8cr"]
 [ext_resource type="Texture2D" uid="uid://d328hr556ddep" path="res://sprites/body-parts/foot2.png" id="9_i57ft"]
-[ext_resource type="Texture2D" uid="uid://dgwgl1ummkip5" path="res://sprites/body-parts/knee2.png" id="10_51k1n"]
+[ext_resource type="Texture2D" uid="uid://b2t37qrhmqwyt" path="res://sprites/body-parts/variants/elbow2_white.png" id="10_51k1n"]
+[ext_resource type="Texture2D" uid="uid://cpu07rg8pa6xw" path="res://sprites/body-parts/variants/torso2_white.png" id="10_dxt8y"]
 [ext_resource type="Shader" uid="uid://b5pdhhu3hpamu" path="res://shaders/border_bottom.gdshader" id="10_iprrb"]
-[ext_resource type="Texture2D" uid="uid://do63528o7mut3" path="res://sprites/body-parts/hip_front.png" id="12_iprrb"]
-[ext_resource type="Texture2D" uid="uid://2amsx3bguhmg" path="res://sprites/body-parts/leg2.png" id="12_ph3qc"]
-[ext_resource type="Texture2D" uid="uid://cwq254yj4mno7" path="res://sprites/body-parts/hip_back.png" id="14_i57ft"]
+[ext_resource type="Texture2D" uid="uid://c1a0krw8srebd" path="res://sprites/body-parts/variants/knee2_white.png" id="13_gclwr"]
+[ext_resource type="Texture2D" uid="uid://bf8twxl5v2dk3" path="res://sprites/body-parts/variants/hip_front_white.png" id="14_ph3qc"]
+[ext_resource type="Texture2D" uid="uid://b2i35ovfchde4" path="res://sprites/body-parts/variants/hip_back_white.png" id="15_xyr7y"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_ov4ub"]
 size = Vector2(83, 339)
@@ -38,7 +38,7 @@ position = Vector2(-4, -226)
 [node name="Sprite2D" type="Sprite2D" parent="Visual/Head"]
 z_index = 100
 z_as_relative = false
-position = Vector2(4, 17)
+position = Vector2(4, 22)
 texture = ExtResource("2_bs8cr")
 
 [node name="Arms" type="Node2D" parent="Visual"]
@@ -58,9 +58,9 @@ walk_speed = 10.0
 bottom_border_shader = ExtResource("10_iprrb")
 phase_offset = 3.142
 lower_joint_sprite = ExtResource("4_bs8cr")
-middle_joint_sprite = ExtResource("5_gaknu")
-upper_joint_sprite = ExtResource("6_t5nmj")
-fill_texture = ExtResource("7_iprrb")
+middle_joint_sprite = ExtResource("10_51k1n")
+upper_joint_sprite = ExtResource("7_dxt8y")
+fill_texture = ExtResource("8_i57ft")
 
 [node name="Arm1" parent="Visual/Arms" instance=ExtResource("6_kxl4y")]
 z_index = 50
@@ -73,15 +73,15 @@ swing_speed = 8.0
 walk_speed = 10.0
 bottom_border_shader = ExtResource("10_iprrb")
 lower_joint_sprite = ExtResource("9_bs8cr")
-middle_joint_sprite = ExtResource("5_gaknu")
-upper_joint_sprite = ExtResource("6_t5nmj")
-fill_texture = ExtResource("7_iprrb")
+middle_joint_sprite = ExtResource("10_51k1n")
+upper_joint_sprite = ExtResource("7_dxt8y")
+fill_texture = ExtResource("6_iprrb")
 
 [node name="Torso" type="Sprite2D" parent="Visual"]
 z_index = 60
 z_as_relative = false
 position = Vector2(-4, -87)
-texture = ExtResource("8_dxt8y")
+texture = ExtResource("10_dxt8y")
 
 [node name="Legs" type="Node2D" parent="Visual"]
 z_as_relative = false
@@ -90,7 +90,7 @@ position = Vector2(0, -71)
 [node name="Leg0" parent="Visual/Legs" instance=ExtResource("6_kxl4y")]
 z_index = 80
 z_as_relative = false
-position = Vector2(-16, 58)
+position = Vector2(-14, 58)
 limb_type = "leg"
 walk_radius = 16.0
 upper_length = 40.0
@@ -98,14 +98,14 @@ lower_length = 60.0
 bottom_border_shader = ExtResource("10_iprrb")
 phase_offset = 3.142
 lower_joint_sprite = ExtResource("9_i57ft")
-middle_joint_sprite = ExtResource("10_51k1n")
-upper_joint_sprite = ExtResource("12_iprrb")
-fill_texture = ExtResource("12_ph3qc")
+middle_joint_sprite = ExtResource("13_gclwr")
+upper_joint_sprite = ExtResource("14_ph3qc")
+fill_texture = ExtResource("8_i57ft")
 
 [node name="Leg1" parent="Visual/Legs" instance=ExtResource("6_kxl4y")]
 z_index = 70
 z_as_relative = false
-position = Vector2(22, 53)
+position = Vector2(18, 53)
 limb_type = "leg"
 direction = -1.0
 walk_radius = 16.0
@@ -113,6 +113,6 @@ upper_length = 40.0
 lower_length = 60.0
 bottom_border_shader = ExtResource("10_iprrb")
 lower_joint_sprite = ExtResource("9_i57ft")
-middle_joint_sprite = ExtResource("10_51k1n")
-upper_joint_sprite = ExtResource("14_i57ft")
-fill_texture = ExtResource("12_ph3qc")
+middle_joint_sprite = ExtResource("13_gclwr")
+upper_joint_sprite = ExtResource("15_xyr7y")
+fill_texture = ExtResource("8_i57ft")

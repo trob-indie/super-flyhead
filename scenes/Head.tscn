@@ -6,7 +6,7 @@
 [sub_resource type="CircleShape2D" id="CircleShape2D_k3og1"]
 radius = 42.107
 
-[node name="Head" type="CharacterBody2D"]
+[node name="Head" type="RigidBody2D"]
 z_index = 200
 z_as_relative = false
 collision_layer = 2
