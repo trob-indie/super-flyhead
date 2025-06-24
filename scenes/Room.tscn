@@ -32,7 +32,7 @@ collision_mask = 3
 [node name="Ramps" type="Node2D" parent="Visual"]
 
 [node name="TopRight" type="StaticBody2D" parent="Visual/Ramps"]
-position = Vector2(809, -627)
+position = Vector2(812, -625)
 scale = Vector2(1, -1)
 collision_layer = 128
 collision_mask = 3
@@ -80,7 +80,7 @@ texture = ExtResource("2_liqgt")
 [node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="Visual/Ramps/BottomLeft"]
 
 [node name="BottomRight" type="StaticBody2D" parent="Visual/Ramps"]
-position = Vector2(802, 9)
+position = Vector2(808, 9)
 collision_layer = 128
 collision_mask = 3
 script = ExtResource("5_ut7mc")
