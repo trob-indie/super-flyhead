@@ -26,6 +26,9 @@ var endpoint_cooldown_time := 0.5  # seconds
 var endpoint_cooldown_timer := 0.0
 var endpoint_collider: CollisionShape2D = null
 
+var is_x_locked := false
+var x_lock_position := 0.0
+var gateway_y_threshold := 0.0
 
 func _ready():
 	var mutant = get_tree().get_root().find_child("Mutant", true, false)
@@ -44,6 +47,9 @@ func _physics_process(delta):
 		await get_tree().create_timer(.0001).timeout 
 		global_position = pending_path_exit_position
 		pending_path_exit_position = null
+	
+	if is_x_locked and global_position.y > gateway_y_threshold + 40:
+		is_x_locked = false
 
 	# Handle boost duration countdown
 	if is_speed_boosted:
@@ -60,6 +66,11 @@ func _physics_process(delta):
 
 	if input_force != Vector2.ZERO:
 		input_force = input_force.normalized() * acceleration
+		
+		if is_x_locked:
+			position.x = x_lock_position
+			input_force.x = 0.0
+
 		apply_central_force(input_force)
 
 	# Apply gravity
@@ -177,3 +188,8 @@ func enter_path(path: Path2D, direction: int):
 func _on_head_detached(new_head):
 	if new_head == self:
 		input_disabled = false
+
+func lock_x_position(y_threshold: float) -> void:
+	is_x_locked = true
+	x_lock_position = global_position.x
+	gateway_y_threshold = y_threshold

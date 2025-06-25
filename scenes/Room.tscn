@@ -1,17 +1,19 @@
-[gd_scene load_steps=13 format=3 uid="uid://duyei0wgq4v12"]
+[gd_scene load_steps=11 format=3 uid="uid://duyei0wgq4v12"]
 
 [ext_resource type="Texture2D" uid="uid://dyluj70wdwaem" path="res://sprites/hospital_hallway_floor.png" id="2_6iwk6"]
 [ext_resource type="Texture2D" uid="uid://dh5gjfv66tdrp" path="res://sprites/ramp.png" id="2_liqgt"]
 [ext_resource type="Texture2D" uid="uid://bh251ncluadqh" path="res://sprites/hospital_background.png" id="3_ut7mc"]
 [ext_resource type="Texture2D" uid="uid://cmpk63uvrhqde" path="res://sprites/hospital_window.png" id="4_8h30a"]
 [ext_resource type="Script" uid="uid://chcvweslq1dwb" path="res://scripts/Ramp.gd" id="5_ut7mc"]
-[ext_resource type="Script" uid="uid://bj4t1div25xw0" path="res://scripts/LooptyLoop.gd" id="6_ut7mc"]
 
 [sub_resource type="Curve2D" id="Curve2D_xmfkn"]
 _data = {
 "points": PackedVector2Array(-381.325, -34.9372, 381.325, 34.9372, -221, 210, 3.00168, 158.418, -3.00168, -158.418, 210, -222)
 }
 point_count = 2
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_6iwk6"]
+size = Vector2(63.5, 12.5)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_8h30a"]
 size = Vector2(271.25, 72.6375)
@@ -21,15 +23,6 @@ size = Vector2(20, 176.538)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_ey61u"]
 size = Vector2(20, 85.8907)
-
-[sub_resource type="Curve2D" id="Curve2D_6iwk6"]
-_data = {
-"points": PackedVector2Array(0, 0, 0, 0, 800, 160, 0, 0, 0, 0, 960, 0, 0, 0, 0, 0, 960, -630, 0, 0, 0, 0, 800, -780, 0, 0, 0, 0, -800, -780, 0, 0, 0, 0, -960, -630, 0, 0, 0, 0, -960, 0, 0, 0, 0, 0, -800, 160)
-}
-point_count = 8
-
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_lygdb"]
-size = Vector2(116, 117)
 
 [node name="Room" type="Node2D"]
 
@@ -85,6 +78,14 @@ texture = ExtResource("2_liqgt")
 
 [node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="Visual/Ramps/BottomLeft"]
 
+[node name="Gateway" type="Area2D" parent="Visual/Ramps/BottomLeft"]
+position = Vector2(175, -148)
+collision_layer = 128
+collision_mask = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Visual/Ramps/BottomLeft/Gateway"]
+shape = SubResource("RectangleShape2D_6iwk6")
+
 [node name="BottomRight" type="StaticBody2D" parent="Visual/Ramps"]
 position = Vector2(808, 9)
 collision_layer = 128
@@ -99,6 +100,14 @@ scale = Vector2(3, 3)
 texture = ExtResource("2_liqgt")
 
 [node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="Visual/Ramps/BottomRight"]
+
+[node name="Gateway" type="Area2D" parent="Visual/Ramps/BottomRight"]
+position = Vector2(175, -148)
+collision_layer = 128
+collision_mask = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Visual/Ramps/BottomRight/Gateway"]
+shape = SubResource("RectangleShape2D_6iwk6")
 
 [node name="Floor" type="StaticBody2D" parent="Visual"]
 collision_layer = 128
@@ -161,27 +170,3 @@ texture = ExtResource("4_8h30a")
 position = Vector2(-1080, -365)
 scale = Vector2(6.96, 16.84)
 shape = SubResource("RectangleShape2D_ey61u")
-
-[node name="Path2D" type="Path2D" parent="."]
-curve = SubResource("Curve2D_6iwk6")
-script = ExtResource("6_ut7mc")
-
-[node name="PathFollow2D" type="PathFollow2D" parent="Path2D"]
-position = Vector2(800, 160)
-rotation = -0.785398
-
-[node name="Endpoint1" type="Area2D" parent="Path2D"]
-position = Vector2(799, 160)
-collision_layer = 128
-collision_mask = 2
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Path2D/Endpoint1"]
-shape = SubResource("RectangleShape2D_lygdb")
-
-[node name="Endpoint2" type="Area2D" parent="Path2D"]
-position = Vector2(-805, 157)
-collision_layer = 128
-collision_mask = 2
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Path2D/Endpoint2"]
-shape = SubResource("RectangleShape2D_lygdb")

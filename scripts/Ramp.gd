@@ -2,6 +2,7 @@ extends StaticBody2D
 
 @onready var path: Path2D = $Path2D
 @onready var collision: CollisionPolygon2D = $CollisionPolygon2D
+@onready var gateway: Area2D = $Gateway  # Optional — set this if using a static gateway
 
 @export var depth := 100.0         # How far to extend downward from the curve
 @export var resolution := 32       # Number of samples for curve smoothness
@@ -32,5 +33,11 @@ func _ready():
 		point.y += depth
 		polygon.append(point)
 
-	# Assign to the collision polygon
 	collision.polygon = polygon
+
+	if gateway and not gateway.is_connected("body_entered", Callable(self, "_on_gateway_body_entered")):
+		gateway.body_entered.connect(_on_gateway_body_entered)
+
+func _on_gateway_body_entered(body):
+	if body.name == "Head":
+		body.lock_x_position(gateway.global_position.y)
