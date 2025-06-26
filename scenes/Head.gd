@@ -1,7 +1,7 @@
 extends RigidBody2D
 
 @export var max_speed := 4000.0
-@export var acceleration := 800.0
+@export var acceleration := 1000.0
 @export var gravity := 981.0
 @export var slope_boost := 6000.0
 @export var boosted_max_speed := 8000.0
@@ -48,7 +48,7 @@ func _physics_process(delta):
 		global_position = pending_path_exit_position
 		pending_path_exit_position = null
 	
-	if is_x_locked and global_position.y > gateway_y_threshold + 40:
+	if is_x_locked and global_position.y >= gateway_y_threshold + 50:
 		is_x_locked = false
 
 	# Handle boost duration countdown
@@ -128,7 +128,7 @@ func _process_path_following(delta):
 	var curve = path_follower.get_parent().curve
 	var curve_length = curve.get_baked_length()
 	var t = path_follower.progress
-	var delta_t = 5.0  # Tunable: smaller for tighter curves
+	var delta_t = 1.0  # Tunable: smaller for tighter curves
 
 	# Safely sample two points to compute tangent
 	var p1 = curve.sample(t, true)

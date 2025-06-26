@@ -5,12 +5,12 @@
 
 [sub_resource type="Curve2D" id="Curve2D_gp0bm"]
 _data = {
-"points": PackedVector2Array(-381.325, -34.9372, 381.325, 34.9372, -221, 210, 3.00168, 158.418, -3.00168, -158.418, 210, -222)
+"points": PackedVector2Array(-121.063, -6.15696, 121.063, 6.15696, -148, 150, 7.74281, 97.3445, -7.74281, -97.3445, 148, -150)
 }
 point_count = 2
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_iys31"]
-size = Vector2(11, 2.75)
+size = Vector2(57, 6.6875)
 
 [node name="Ramp" type="StaticBody2D"]
 collision_layer = 128
@@ -18,7 +18,7 @@ collision_mask = 3
 script = ExtResource("1_iys31")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
-scale = Vector2(3, 3)
+scale = Vector2(2, 2)
 texture = ExtResource("1_08jc4")
 
 [node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="."]
@@ -27,10 +27,9 @@ texture = ExtResource("1_08jc4")
 curve = SubResource("Curve2D_gp0bm")
 
 [node name="Gateway" type="Area2D" parent="."]
-position = Vector2(206, -256)
+position = Vector2(121, -149)
 collision_layer = 128
 collision_mask = 2
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Gateway"]
-position = Vector2(-3, 32.375)
 shape = SubResource("RectangleShape2D_iys31")
