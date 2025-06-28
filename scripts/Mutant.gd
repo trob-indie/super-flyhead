@@ -16,6 +16,7 @@ var default_collider_height := 339.0
 var collapsed_collider_height := 175.0
 var collider_blend := 1.0
 var collider_blend_speed := 5.0
+var should_collapse := false
 
 @onready var head = $Visual/Head
 @onready var right_arm = $Visual/Arms/Arm0
@@ -28,6 +29,9 @@ var facing_right := true
 var input_disabled = false
 signal head_detached
 
+var decap_duration = 0.75
+var decap_timer = 0.0
+
 func _physics_process(delta):
 	### Non-input-based section
 	apply_gravity(delta)
@@ -35,6 +39,8 @@ func _physics_process(delta):
 	
 	### Input guard
 	if input_disabled:
+		wait_for_decap_to_collapse_transition(delta)
+		
 		# still move with gravity, but no horizontal input
 		move_and_slide()
 		return
@@ -45,21 +51,14 @@ func _physics_process(delta):
 	var input_jump = Input.is_action_just_pressed("jump")
 	var input_head = Input.is_action_just_pressed("head")
 	
+	# If the head's on the body, and we want it off
 	if input_head and head.visible:
-		head.visible = false
-
-		# Spawn detached head; disable input; return early
-		if detached_head_scene:
-			var new_head = detached_head_scene.instantiate()
-			new_head.global_position = head.global_position
-			new_head.name = "Head"
-			get_tree().root.add_child(new_head)
-
-			input_disabled = true
-			for limb in [right_arm, left_arm, right_leg, left_leg]:
-				limb.animation_state = "collapse"
-			emit_signal("head_detached", new_head)
-			return
+		# disable input; start animation; return early
+		input_disabled = true
+		decap_timer = decap_duration
+		for limb in [right_arm, left_arm, right_leg, left_leg]:
+			limb.animation_state = "decapitate"
+		return
 	
 	if input_jump and is_on_floor():
 		velocity.y = -jump_force
@@ -94,7 +93,7 @@ func apply_gravity(delta):
 
 func collapse_collider(delta):
 	
-	if input_disabled:
+	if should_collapse:
 		collider_blend = max(collider_blend - delta * collider_blend_speed, 0.0)
 	else:
 		collider_blend = min(collider_blend + delta * collider_blend_speed, 1.0)
@@ -102,7 +101,21 @@ func collapse_collider(delta):
 	# Blend height and update shape
 	var height = lerp(collapsed_collider_height, default_collider_height, collider_blend)
 	collider_shape.size.y = height
-	
+
+func wait_for_decap_to_collapse_transition(delta):
+	if decap_timer > 0.0:
+		decap_timer -= delta
+	elif decap_timer <= 0.0 && head.visible:
+		decap_timer = 0.0
+		should_collapse = true
+		head.visible = false
+		var new_head = detached_head_scene.instantiate()
+		new_head.global_position = head.global_position
+		new_head.name = "Head"
+		get_tree().root.add_child(new_head)
+		emit_signal("head_detached", new_head)
+		for limb in [right_arm, left_arm, right_leg, left_leg]:
+			limb.animation_state = "collapse"
 
 var time := 0.0
 func _process(delta):

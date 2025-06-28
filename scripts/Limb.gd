@@ -41,6 +41,9 @@ var bottom_border_shader_material: ShaderMaterial
 @onready var fill_sprites = $FillSprites
 @export var fill_texture: Texture2D
 
+@export var head_path: NodePath
+var head: Node2D
+
 var time := 0.0
 
 func _ready():
@@ -51,39 +54,58 @@ func _ready():
 	middle_joint_sprite_instance.texture = middle_joint_sprite
 	upper_joint_sprite_instance.texture = upper_joint_sprite
 	
+	head = get_node(head_path)
+	
 	if bottom_border_shader:
 		bottom_border_shader_material = ShaderMaterial.new()
 		bottom_border_shader_material.shader = bottom_border_shader
 
 func _process(delta):
 	time += delta
-	
+
+	var joints = []  # Initialize the joints array to be populated with joint positions
+
+	# Handle the "collapse" animation
 	if animation_state == "collapse":
-		var joints = []
 		if limb_type == "leg":
 			joints = animate_leg_collapse(time)
 		draw_limb_mesh(joints)
 		update_sprites(joints)
 		return
 
+	# Handle the "decapitate" animation
+	if animation_state == "decapitate":
+		# Animate the decapitation
+		if limb_type == "arm":
+			joints = animate_arm_decapitate(time)
 
-	if animation_state == "walk":
+			# Update the limb mesh and sprites
+			draw_limb_mesh(joints)
+			update_sprites(joints)
+
+		return
+
+	# Handle the "walk" or "run" animations
+	if animation_state == "walk" or animation_state == "run":
 		blend_amount = clamp(blend_amount + delta * blend_speed, 0.0, 1.0)
-	elif animation_state == "idle":
-		blend_amount = clamp(blend_amount - delta * blend_speed, 0.0, 1.0)
-
-	var joints = []
-	if animation_state == "jump":
-		joints = animate_limb_jump(time)
-	else:
 		var walk_pose = animate_limb_walk(time)
 		var idle_pose = animate_limb_idle(time)
-		
+
 		# Blend each joint between idle and walk
 		for i in range(idle_pose.size()):
 			var blended = idle_pose[i].lerp(walk_pose[i], blend_amount)
 			joints.append(blended)
-	
+
+	# Handle the "idle" animation
+	elif animation_state == "idle":
+		blend_amount = clamp(blend_amount - delta * blend_speed, 0.0, 1.0)
+		joints = animate_limb_idle(time)
+
+	# Handle the "jump" animation
+	elif animation_state == "jump":
+		joints = animate_limb_jump(time)
+
+	# Draw and update limb mesh and sprites
 	draw_limb_mesh(joints)
 	update_sprites(joints)
 
@@ -157,6 +179,26 @@ func animate_leg_collapse(time: float) -> Array:
 	var knee = origin + thigh_dir * upper_length + knee_offset
 	var foot = knee + shin_dir * lower_length
 	return [origin, knee, foot]
+
+func animate_arm_decapitate(time: float) -> Array:
+	# Get the initial positions of the joints in local space (relative to the body)
+	var shoulder = shoulder_offset  # Shoulder position in local space
+	var hand = shoulder + Vector2(0, arm_length + 7.5)  # Hand position in local space (formerly wrist)
+	var elbow = (shoulder + hand) * 0.5  # Elbow position in local space
+	
+	# Parameters for the animation
+	var rise_duration = 0.75  # Duration to raise the arms up to the head
+	var target_height_hand = Vector2(hand.x + 15.0, hand.y - 160.0)  # Target position just above the head
+	var target_position_elbow = Vector2(elbow.x + 45.0, elbow.y - 10.0)
+
+	# First part: Raise the arms up to the head's position
+	var rise_progress = min(time / rise_duration, 1.0)  # Lerp value from 0 to 1
+	#shoulder.y = lerp(shoulder.y, target_height, rise_progress)
+	elbow = lerp(elbow, target_position_elbow, rise_progress)
+	hand = lerp(hand, target_height_hand, rise_progress)
+
+	# Return the final joint positions for the decapitation animation
+	return [shoulder, elbow, hand]
 
 func solve_ik(origin: Vector2, target: Vector2, upper_len: float, lower_len: float) -> Array:
 	var to_target = target - origin
