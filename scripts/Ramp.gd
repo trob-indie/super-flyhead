@@ -4,7 +4,7 @@ extends StaticBody2D
 @onready var collision: CollisionPolygon2D = $CollisionPolygon2D
 @onready var gateway: Area2D = $Gateway  # Optional — set this if using a static gateway
 
-@export var depth := 100.0         # How far to extend downward from the curve
+@export var depth := 50.0         # How far to extend downward from the curve
 @export var resolution := 32       # Number of samples for curve smoothness
 
 func _ready():

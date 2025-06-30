@@ -31,31 +31,32 @@ signal head_detached
 
 var decap_duration = 0.75
 var decap_timer = 0.0
+var decap_anim_time = 0.0 # ← NEW: shared animation time for decapitate
 
 func _physics_process(delta):
-	### Non-input-based section
 	apply_gravity(delta)
 	collapse_collider(delta)
-	
-	### Input guard
+
 	if input_disabled:
+		decap_anim_time += delta   # ← Increment shared timer
 		wait_for_decap_to_collapse_transition(delta)
-		
-		# still move with gravity, but no horizontal input
+		# Synchronize all limb decapitate timers
+		for limb in [right_arm, left_arm, right_leg, left_leg]:
+			if limb.animation_state == "decapitate":
+				limb.set_external_animation_time(decap_anim_time, decap_duration)  # ← pass both timer and duration
 		move_and_slide()
 		return
-	
-	### Input-based section
+
+	# ... [input section below is unchanged, except for this block:] ...
 	var input_left = Input.is_action_pressed("move_left")
 	var input_right = Input.is_action_pressed("move_right")
 	var input_jump = Input.is_action_just_pressed("jump")
 	var input_head = Input.is_action_just_pressed("head")
-	
-	# If the head's on the body, and we want it off
+
 	if input_head and head.visible:
-		# disable input; start animation; return early
 		input_disabled = true
 		decap_timer = decap_duration
+		decap_anim_time = 0.0    # ← Reset the shared timer!
 		for limb in [right_arm, left_arm, right_leg, left_leg]:
 			limb.animation_state = "decapitate"
 		return

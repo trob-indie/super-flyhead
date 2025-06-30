@@ -44,6 +44,7 @@ var bottom_border_shader_material: ShaderMaterial
 @export var head_path: NodePath
 var head: Node2D
 
+var decapitate_duration = 0.0
 var time := 0.0
 
 func _ready():
@@ -61,7 +62,8 @@ func _ready():
 		bottom_border_shader_material.shader = bottom_border_shader
 
 func _process(delta):
-	time += delta
+	if animation_state != "decapitate":
+		time += delta
 
 	var joints = []  # Initialize the joints array to be populated with joint positions
 
@@ -82,7 +84,6 @@ func _process(delta):
 			# Update the limb mesh and sprites
 			draw_limb_mesh(joints)
 			update_sprites(joints)
-
 		return
 
 	# Handle the "walk" or "run" animations
@@ -181,23 +182,49 @@ func animate_leg_collapse(time: float) -> Array:
 	return [origin, knee, foot]
 
 func animate_arm_decapitate(time: float) -> Array:
-	# Get the initial positions of the joints in local space (relative to the body)
-	var shoulder = shoulder_offset  # Shoulder position in local space
-	var hand = shoulder + Vector2(0, arm_length + 7.5)  # Hand position in local space (formerly wrist)
-	var elbow = (shoulder + hand) * 0.5  # Elbow position in local space
-	
-	# Parameters for the animation
-	var rise_duration = 0.75  # Duration to raise the arms up to the head
-	var target_height_hand = Vector2(hand.x + 15.0, hand.y - 160.0)  # Target position just above the head
-	var target_position_elbow = Vector2(elbow.x + 45.0, elbow.y - 10.0)
+	var shoulder = shoulder_offset
+	var initial_hand = shoulder + Vector2(0, arm_length + 7.5)
+	var initial_elbow = (shoulder + initial_hand) * 0.5
 
-	# First part: Raise the arms up to the head's position
-	var rise_progress = min(time / rise_duration, 1.0)  # Lerp value from 0 to 1
-	#shoulder.y = lerp(shoulder.y, target_height, rise_progress)
-	elbow = lerp(elbow, target_position_elbow, rise_progress)
-	hand = lerp(hand, target_height_hand, rise_progress)
+	var elbow_action_duration = decapitate_duration * 0.75
+	var jerk_action_duration = decapitate_duration * 0.25
 
-	# Return the final joint positions for the decapitation animation
+	var elbow = initial_elbow
+	var hand = initial_hand
+
+	if time <= elbow_action_duration:
+		# Phase 1: Rotate arm CCW around elbow
+		var progress = clamp(time / elbow_action_duration, 0.0, 1.0)
+
+		var target_elbow = initial_elbow + Vector2(45.0, -10.0)
+		elbow = elbow.lerp(target_elbow, progress)
+
+		var initial_vector = initial_hand - elbow
+		var initial_angle = initial_vector.angle()
+		var total_rotation = -(5.0 * PI / 4.0)
+		var angle = initial_angle + total_rotation * progress
+
+		var rotated = initial_vector.length() * Vector2(cos(angle), sin(angle))
+		hand = elbow + rotated
+	else:
+		var initial_vector = hand - elbow
+		# Phase 2: Quickly jerk elbow above shoulder, hand above elbow
+		var jerk_progress = clamp((time - elbow_action_duration) / jerk_action_duration, 0.0, 1.0)
+
+		# Final positions after rotation phase
+		var elbow_rotated_final = initial_elbow + Vector2(45.0, -10.0)
+		var final_rotation_angle = initial_vector.angle() - (5.0 * PI / 4.0)
+		var hand_rotated_final = elbow_rotated_final + initial_vector.length() * Vector2(cos(final_rotation_angle), sin(final_rotation_angle))
+
+		# Jerk target positions (vertical alignment)
+		var jerk_target_elbow = shoulder + Vector2(0, -arm_length * 0.5)
+		var jerk_target_hand = shoulder + Vector2(0, -arm_length - 10)
+		var y_diff = jerk_target_hand.y - hand.y
+
+		# Quickly interpolate elbow and hand to vertical alignment above shoulder
+		elbow = elbow_rotated_final.lerp(jerk_target_elbow, jerk_progress)
+		hand = hand_rotated_final.lerp(jerk_target_hand, jerk_progress)
+
 	return [shoulder, elbow, hand]
 
 func solve_ik(origin: Vector2, target: Vector2, upper_len: float, lower_len: float) -> Array:
@@ -356,6 +383,9 @@ func update_sprites_leg(points):
 	upper_joint_sprite_instance.z_as_relative = false
 	upper_joint_sprite_instance.scale.x = -direction*limb_width
 
+func set_external_animation_time(anim_time: float, duration: float) -> void:
+	time = anim_time
+	decapitate_duration = duration  # If you want to pass this dynamically, see below
 
 #func animate_arms_flap_wings(time: float) -> Array:
 	#var shoulder = shoulder_offset
