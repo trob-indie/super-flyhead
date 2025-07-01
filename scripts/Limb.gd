@@ -1,12 +1,15 @@
 extends Node2D
 
-@export var animation_state := "idle" # "idle" or "walk"
-var blend_amount = 0.0 # controls how much "influence" the walk animation has
-@export var blend_speed := 4.0  # How quickly to blend between animations
+@export var animation_state := "idle"
+# controls how much "influence" the walk animation has
+var blend_amount = 0.0
+# How quickly to blend between animations
+@export var blend_speed := 4.0
 
 @export var limb_type = "arm"
 @export var limb_width = 1.0
-@export var direction := 1.0 # +1 for left limb, -1 for right limb
+# +1 for left limb, -1 for right limb
+@export var direction := 1.0
 @export var facing_right := true
 
 # Arm-specific
@@ -65,7 +68,8 @@ func _process(delta):
 	if animation_state != "decapitate":
 		time += delta
 
-	var joints = []  # Initialize the joints array to be populated with joint positions
+	# Initialize the joints array to be populated with joint positions
+	var joints = []
 
 	# Handle the "collapse" animation
 	if animation_state == "collapse":

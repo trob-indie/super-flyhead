@@ -5,7 +5,8 @@ extends RigidBody2D
 @export var gravity := 981.0
 @export var slope_boost := 6000.0
 @export var boosted_max_speed := 8000.0
-@export var boost_duration := 2.0  # in seconds
+# in seconds
+@export var boost_duration := 2.0
 
 var boost_timer := 0.0
 var is_speed_boosted := false
@@ -22,7 +23,8 @@ var path_direction := 1
 var path_speed := 0.0
 var pending_path_exit_position = null
 
-var endpoint_cooldown_time := 0.5  # seconds
+# in seconds
+var endpoint_cooldown_time := 0.5
 var endpoint_cooldown_timer := 0.0
 var endpoint_collider: CollisionShape2D = null
 
@@ -59,7 +61,7 @@ func _physics_process(delta):
 	if is_x_locked and global_position.y >= gateway_y_threshold + 50:
 		is_x_locked = false
 
-	# Handle boost duration countdown
+	# Handle boost duration countdown (currently just for slopes)
 	if is_speed_boosted:
 		boost_timer -= delta
 		if boost_timer <= 0.0:
@@ -84,7 +86,6 @@ func _physics_process(delta):
 	# Apply gravity
 	apply_central_force(Vector2(0, gravity))
 
-	# Clamp horizontal speed
 	var speed_limit = boosted_max_speed
 	if is_speed_boosted:
 		speed_limit = max_speed
@@ -122,7 +123,7 @@ func _integrate_forces(state):
 			is_speed_boosted = true
 			boost_timer = boost_duration
 
-	# Optional: input suppression if moving into a wall
+	# Input suppression if moving into a wall
 	if input_force != Vector2.ZERO and opposing_normal != Vector2.ZERO:
 		var input_dir = input_force.normalized()
 		var normal_dir = opposing_normal.normalized()
@@ -136,7 +137,8 @@ func _process_path_following(delta):
 	var curve = path_follower.get_parent().curve
 	var curve_length = curve.get_baked_length()
 	var t = path_follower.progress
-	var delta_t = 1.0  # Tunable: smaller for tighter curves
+	# Tunable: smaller for tighter curves
+	var delta_t = 1.0
 
 	# Safely sample two points to compute tangent
 	var p1 = curve.sample(t, true)
@@ -153,7 +155,8 @@ func _process_path_following(delta):
 	global_position = path_follower.global_position
 
 	# Exit path if at either end (no velocity applied)
-	const EPSILON := 0.01  # You can tighten or loosen this if needed
+	# You can tighten or loosen this if needed
+	const EPSILON := 0.01
 
 	if path_direction == 1 and path_follower.progress_ratio >= 1.0 - EPSILON:
 		is_on_path = false
@@ -217,7 +220,4 @@ func _input(event):
 		reattach_to_body(attach_area)
 
 func reattach_to_body(body_node):
-	# Do your reattachment logic here!
-	# Example: hide detached head, show body's head sprite, etc.
-	print("reattach_to_body")
 	emit_signal("attempt_reattach")
