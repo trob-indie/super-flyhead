@@ -1,6 +1,7 @@
-[gd_scene load_steps=5 format=3 uid="uid://c1q42i3avb2fr"]
+[gd_scene load_steps=6 format=3 uid="uid://c1q42i3avb2fr"]
 
 [ext_resource type="Script" uid="uid://6jadwuru45i" path="res://scripts/Limb.gd" id="1_8gyui"]
+[ext_resource type="Script" uid="uid://pqh5osh6t1cy" path="res://scripts/ProceduralAnimation/SpriteMask.gd" id="2_046k3"]
 [ext_resource type="Texture2D" uid="uid://b51eesr5sjgu3" path="res://sprites/body-parts/elbow.png" id="3_hi5gt"]
 [ext_resource type="Texture2D" uid="uid://dlrdqfcvot5o8" path="res://sprites/body-parts/hand.png" id="4_5xu0v"]
 [ext_resource type="Texture2D" uid="uid://buxdcgnb0kkh1" path="res://sprites/body-parts/shoulder.png" id="5_jxyud"]
@@ -9,8 +10,6 @@
 script = ExtResource("1_8gyui")
 
 [node name="LimbMesh" type="Polygon2D" parent="."]
-
-[node name="FillSprites" type="Node2D" parent="."]
 
 [node name="UpperJoint" type="Sprite2D" parent="."]
 z_as_relative = false
@@ -23,3 +22,6 @@ texture = ExtResource("3_hi5gt")
 [node name="LowerJoint" type="Sprite2D" parent="."]
 z_as_relative = false
 texture = ExtResource("4_5xu0v")
+
+[node name="FillSprites" type="Node2D" parent="."]
+script = ExtResource("2_046k3")

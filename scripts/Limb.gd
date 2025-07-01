@@ -29,20 +29,11 @@ var blend_amount = 0.0
 @export var upper_length := 30.0
 @export var lower_length := 30.0
 @export var joint_spacing := 8.0
-@export var bottom_border_shader: Shader
-var bottom_border_shader_material: ShaderMaterial
 
 @export var phase_offset := 0.0
 
-@export var lower_joint_sprite: Texture2D
-@onready var lower_joint_sprite_instance = $LowerJoint
-@export var middle_joint_sprite: Texture2D
-@onready var middle_joint_sprite_instance = $MiddleJoint
-@export var upper_joint_sprite: Texture2D
-@onready var upper_joint_sprite_instance = $UpperJoint
 @onready var mesh = $LimbMesh
 @onready var fill_sprites = $FillSprites
-@export var fill_texture: Texture2D
 
 @export var head_path: NodePath
 var head: Node2D
@@ -54,15 +45,8 @@ func _ready():
 	mesh.material = null
 	mesh.texture = null
 	mesh.color = Color("#d5bfaa")
-	lower_joint_sprite_instance.texture = lower_joint_sprite
-	middle_joint_sprite_instance.texture = middle_joint_sprite
-	upper_joint_sprite_instance.texture = upper_joint_sprite
 	
 	head = get_node(head_path)
-	
-	if bottom_border_shader:
-		bottom_border_shader_material = ShaderMaterial.new()
-		bottom_border_shader_material.shader = bottom_border_shader
 
 func _process(delta):
 	if animation_state != "decapitate":
@@ -279,120 +263,7 @@ func draw_limb_mesh(points: Array) -> void:
 	mesh.polygon = poly
 
 func update_sprites(points: Array) -> void:
-	if points.size() != 3:
-		return
-
-	var positions := []
-	var from_points = [points[0], points[1]]
-	var to_points = [points[1], points[2]]
-
-	for i in range(2):
-		var from = from_points[i]
-		var to = to_points[i]
-		var segment_count = 1
-
-		for j in range(segment_count):
-			var t = float(j) / segment_count
-			positions.append(from.lerp(to, t))
-	positions.append(points[2])
-
-	while fill_sprites.get_child_count() < positions.size() - 1:
-		var seg = Sprite2D.new()
-		seg.texture = fill_texture
-		fill_sprites.add_child(seg)
-
-	for i in range(positions.size() - 1):
-		var from = positions[i]
-		var to = positions[i + 1]
-		var seg = fill_sprites.get_child(i) as Sprite2D
-		var mid = (from + to) * 0.5
-		var dir = (to - from).normalized()
-		var length = (to - from).length()
-		seg.global_position = mesh.to_global(mid)
-		seg.rotation = dir.angle() - PI / 2
-		seg.z_index = z_index
-		seg.z_as_relative = false
-		seg.scale = Vector2(limb_width, length / seg.texture.get_height())
-		seg.visible = true
-
-	for i in range(positions.size() - 1, fill_sprites.get_child_count()):
-		fill_sprites.get_child(i).visible = false
-
-	if positions.size() > 1:
-		var last_sprite = fill_sprites.get_child(positions.size() - 2) as Sprite2D
-		if bottom_border_shader_material:
-			last_sprite.material = bottom_border_shader_material
-
-	if limb_type == "arm":
-		update_sprites_arm(points)
-	elif limb_type == "leg":
-		update_sprites_leg(points)
-
-func update_sprites_arm(points):
-	var shoulder_pos = mesh.to_global(points[0])
-	var elbow_pos = mesh.to_global(Vector2(points[1].x + direction*2.5, points[1].y + 0.5))
-	var hand_pos = mesh.to_global(points[2]) + Vector2(0.0, 2.0)
-	lower_joint_sprite_instance.global_position = hand_pos
-	if facing_right:
-		lower_joint_sprite_instance.rotation = (hand_pos - elbow_pos).angle() - PI / 2
-	else:
-		var delta = hand_pos - elbow_pos
-		delta.x *= -1
-		lower_joint_sprite_instance.rotation = delta.angle() - PI / 2
-	lower_joint_sprite_instance.scale.x = -direction*limb_width
-	lower_joint_sprite_instance.z_index = z_index - 1
-	lower_joint_sprite_instance.z_as_relative = false
-
-	middle_joint_sprite_instance.global_position = elbow_pos
-	middle_joint_sprite_instance.rotation = 0
-	middle_joint_sprite_instance.z_index = z_index - 1
-	middle_joint_sprite_instance.z_as_relative = false
-	middle_joint_sprite_instance.scale.x = limb_width
-
-	if facing_right:
-		upper_joint_sprite_instance.rotation = (elbow_pos - shoulder_pos).angle() - PI / 2
-	else:
-		var delta = elbow_pos - shoulder_pos
-		delta.x *= -1
-		upper_joint_sprite_instance.rotation = delta.angle() - PI / 2
-	upper_joint_sprite_instance.global_position = shoulder_pos
-	upper_joint_sprite_instance.z_index = z_index + 1
-	upper_joint_sprite_instance.z_as_relative = false
-	upper_joint_sprite_instance.scale.x = -direction*limb_width
-
-func update_sprites_leg(points):
-	var hip_pos = mesh.to_global(points[0])
-	var knee_pos = mesh.to_global(points[1])
-	var foot_pos = mesh.to_global(points[2] + Vector2(8, 3))
-	var prev_pos = mesh.to_global(points[1])
-	
-	lower_joint_sprite_instance.global_position = foot_pos + Vector2(0.0, 4.0)
-	if facing_right:
-		lower_joint_sprite_instance.rotation = (foot_pos - prev_pos).angle() - (PI / 2) + 0.1
-	else:
-		var delta = foot_pos - prev_pos
-		delta.x *= -1
-		lower_joint_sprite_instance.rotation = delta.angle() - PI / 2 + 0.1
-	lower_joint_sprite_instance.z_index = z_index - 1
-	lower_joint_sprite_instance.z_as_relative = false
-	lower_joint_sprite_instance.scale.x = limb_width
-
-	middle_joint_sprite_instance.global_position = knee_pos
-	middle_joint_sprite_instance.rotation = 0
-	middle_joint_sprite_instance.z_index = z_index - 1
-	middle_joint_sprite_instance.z_as_relative = false
-	middle_joint_sprite_instance.scale.x = limb_width
-	
-	if facing_right:
-		upper_joint_sprite_instance.rotation = (knee_pos - hip_pos).angle() - PI / 2
-	else:
-		var delta = knee_pos - hip_pos
-		delta.x *= -1
-		upper_joint_sprite_instance.rotation = delta.angle() - PI / 2
-	upper_joint_sprite_instance.global_position = hip_pos
-	upper_joint_sprite_instance.z_index = z_index - 1
-	upper_joint_sprite_instance.z_as_relative = false
-	upper_joint_sprite_instance.scale.x = -direction*limb_width
+	fill_sprites.update_sprites(points, direction, facing_right, limb_width, z_index)
 
 func set_external_animation_time(anim_time: float, duration: float) -> void:
 	time = anim_time

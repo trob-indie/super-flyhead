@@ -1,7 +1,7 @@
 [gd_scene load_steps=4 format=3 uid="uid://cjpgyep538ta1"]
 
 [ext_resource type="Texture2D" uid="uid://dfbvuxfosbqty" path="res://sprites/body-parts/flyhead2.png" id="1_k3og1"]
-[ext_resource type="Script" uid="uid://bxppcrc7hh1tk" path="res://scenes/Head.gd" id="1_s235k"]
+[ext_resource type="Script" uid="uid://bxppcrc7hh1tk" path="res://scripts/Head.gd" id="1_s235k"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_k3og1"]
 radius = 42.107
