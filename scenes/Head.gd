@@ -30,10 +30,18 @@ var is_x_locked := false
 var x_lock_position := 0.0
 var gateway_y_threshold := 0.0
 
+var can_attach = false
+var attach_area = null
+signal attempt_reattach
+
 func _ready():
 	var mutant = get_tree().get_root().find_child("Mutant", true, false)
 	if mutant:
 		mutant.connect("head_detached", _on_head_detached)
+	
+	for area in get_tree().get_nodes_in_group("HeadAttachmentArea"):
+		area.connect("body_entered", self._on_area_entered)
+		area.connect("body_exited", self._on_area_exited)
 
 func _physics_process(delta):
 	if input_disabled:
@@ -193,3 +201,23 @@ func lock_x_position(y_threshold: float) -> void:
 	is_x_locked = true
 	x_lock_position = global_position.x
 	gateway_y_threshold = y_threshold
+
+func _on_area_entered(body):
+	if body==self:
+		can_attach=true
+		attach_area=body
+
+func _on_area_exited(body):
+	if body==self:
+		can_attach=false
+		attach_area=null
+
+func _input(event):
+	if event.is_action_pressed("head") and can_attach and attach_area:
+		reattach_to_body(attach_area)
+
+func reattach_to_body(body_node):
+	# Do your reattachment logic here!
+	# Example: hide detached head, show body's head sprite, etc.
+	print("reattach_to_body")
+	emit_signal("attempt_reattach")

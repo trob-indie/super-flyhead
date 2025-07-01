@@ -27,13 +27,21 @@ var should_collapse := false
 
 var facing_right := true
 var input_disabled = false
-signal head_detached
 
 var decap_duration = 0.75
 var decap_timer = 0.0
 var decap_anim_time = 0.0 # ← NEW: shared animation time for decapitate
 
+var detached_head = null
+var can_reattach = false
+
+signal head_detached
+
+var detach_cooldown := 0.0  # <<-- NEW cooldown variable
+
 func _physics_process(delta):
+	detach_cooldown = max(detach_cooldown - delta, 0.0)  # <<-- Decrement cooldown
+
 	apply_gravity(delta)
 	collapse_collider(delta)
 
@@ -53,7 +61,7 @@ func _physics_process(delta):
 	var input_jump = Input.is_action_just_pressed("jump")
 	var input_head = Input.is_action_just_pressed("head")
 
-	if input_head and head.visible:
+	if input_head and head.visible and detach_cooldown <= 0.0:  # <<-- Check cooldown
 		input_disabled = true
 		decap_timer = decap_duration
 		decap_anim_time = 0.0    # ← Reset the shared timer!
@@ -93,7 +101,6 @@ func apply_gravity(delta):
 		velocity.y = min(velocity.y, max_fall_speed)
 
 func collapse_collider(delta):
-	
 	if should_collapse:
 		collider_blend = max(collider_blend - delta * collider_blend_speed, 0.0)
 	else:
@@ -106,17 +113,38 @@ func collapse_collider(delta):
 func wait_for_decap_to_collapse_transition(delta):
 	if decap_timer > 0.0:
 		decap_timer -= delta
-	elif decap_timer <= 0.0 && head.visible:
+	elif decap_timer <= 0.0 and head.visible:
 		decap_timer = 0.0
 		should_collapse = true
 		head.visible = false
-		var new_head = detached_head_scene.instantiate()
-		new_head.global_position = head.global_position
-		new_head.name = "Head"
-		get_tree().root.add_child(new_head)
-		emit_signal("head_detached", new_head)
+		detached_head = detached_head_scene.instantiate()
+		detached_head.connect("attempt_reattach", Callable(self, "_on_head_attempt_reattach"))
+		detached_head.global_position = head.global_position
+		detached_head.name = "Head"
+		get_tree().root.add_child(detached_head)
+		emit_signal("head_detached", detached_head)
+		# Enable head reattachment
 		for limb in [right_arm, left_arm, right_leg, left_leg]:
 			limb.animation_state = "collapse"
+
+func _on_head_attempt_reattach():
+	print("attempting to reattach head")
+	if detached_head:
+		reattach_head()
+
+func reattach_head():
+	print("reattaching head")
+	if detached_head:
+		detached_head.queue_free()
+		detached_head = null
+	head.visible = true
+	should_collapse = false
+	input_disabled = false
+	for limb in [right_arm, left_arm, right_leg, left_leg]:
+		limb.animation_state = "idle"
+		limb.set_external_animation_time(0.0, 0.0)
+	detach_cooldown = 0.2  # <<-- Set cooldown here
+	emit_signal("head_reattached")
 
 var time := 0.0
 func _process(delta):

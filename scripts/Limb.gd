@@ -71,6 +71,8 @@ func _process(delta):
 	if animation_state == "collapse":
 		if limb_type == "leg":
 			joints = animate_leg_collapse(time)
+		elif limb_type == "arm":
+			joints = animate_arm_collapse(time)
 		draw_limb_mesh(joints)
 		update_sprites(joints)
 		return
@@ -181,6 +183,12 @@ func animate_leg_collapse(time: float) -> Array:
 	var foot = knee + shin_dir * lower_length
 	return [origin, knee, foot]
 
+func animate_arm_collapse(time: float) -> Array:
+	var shoulder = shoulder_offset
+	var hand = shoulder + Vector2(0, arm_length + 7.5)
+	var elbow = (shoulder + hand) * 0.5
+	return [shoulder, elbow, hand]
+
 func animate_arm_decapitate(time: float) -> Array:
 	var shoulder = shoulder_offset
 	var initial_hand = shoulder + Vector2(0, arm_length + 7.5)
@@ -218,8 +226,7 @@ func animate_arm_decapitate(time: float) -> Array:
 
 		# Jerk target positions (vertical alignment)
 		var jerk_target_elbow = shoulder + Vector2(0, -arm_length * 0.5)
-		var jerk_target_hand = shoulder + Vector2(0, -arm_length - 10)
-		var y_diff = jerk_target_hand.y - hand.y
+		var jerk_target_hand = shoulder + Vector2(0, -arm_length - 5)
 
 		# Quickly interpolate elbow and hand to vertical alignment above shoulder
 		elbow = elbow_rotated_final.lerp(jerk_target_elbow, jerk_progress)
@@ -385,7 +392,7 @@ func update_sprites_leg(points):
 
 func set_external_animation_time(anim_time: float, duration: float) -> void:
 	time = anim_time
-	decapitate_duration = duration  # If you want to pass this dynamically, see below
+	decapitate_duration = duration
 
 #func animate_arms_flap_wings(time: float) -> Array:
 	#var shoulder = shoulder_offset
