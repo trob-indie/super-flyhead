@@ -23,3 +23,8 @@ func _process(delta):
 func _on_head_detached(new_head):
 	if new_head:
 		target_node = new_head
+		mutant.connect("head_reattached", _on_head_reattached)
+
+func _on_head_reattached(node):
+	if node == mutant:
+		target_node = mutant

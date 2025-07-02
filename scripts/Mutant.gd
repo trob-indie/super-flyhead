@@ -23,6 +23,7 @@ var should_collapse := false
 @onready var left_arm = $Visual/Arms/Arm1
 @onready var right_leg = $Visual/Legs/Leg0
 @onready var left_leg = $Visual/Legs/Leg1
+@onready var limbs = [right_arm, left_arm, right_leg, left_leg]
 @onready var visual = $Visual
 
 var facing_right := true
@@ -36,6 +37,7 @@ var detached_head = null
 var can_reattach = false
 
 signal head_detached
+signal head_reattached
 
 var detach_cooldown := 0.0
 
@@ -48,7 +50,6 @@ func _physics_process(delta):
 	if input_disabled:
 		decap_anim_time += delta
 		wait_for_decap_to_collapse_transition(delta)
-		# Synchronize all limb decapitate timers
 		for limb in [right_arm, left_arm, right_leg, left_leg]:
 			if limb.animation_state == "decapitate":
 				limb.set_external_animation_time(decap_anim_time, decap_duration)
@@ -64,8 +65,8 @@ func _physics_process(delta):
 		input_disabled = true
 		decap_timer = decap_duration
 		decap_anim_time = 0.0 
-		for limb in [right_arm, left_arm, right_leg, left_leg]:
-			limb.animation_state = "decapitate"
+		
+		visual.set_animation_state_with_timer("decapitate", 0.0, 0.0)
 		return
 	
 	if input_jump and is_on_floor():
@@ -83,14 +84,15 @@ func _physics_process(delta):
 	visual.scale.x = 1 if facing_right else -1
 
 	# Update limbs
-	for limb in [right_arm, left_arm, right_leg, left_leg]:
+	for limb in limbs:
 		limb.facing_right = facing_right
-		if not is_on_floor():
-			limb.animation_state = "jump"
-		elif velocity.x != 0:
-			limb.animation_state = "walk"
-		else:
-			limb.animation_state = "idle"
+	
+	if visual.set_animation_state_on_condition("jump", not is_on_floor()):
+		pass
+	elif visual.set_animation_state_on_condition("walk", velocity.x != 0):
+		pass
+	else:
+		visual.set_animation_state("idle")
 
 	move_and_slide()
 
@@ -123,8 +125,7 @@ func wait_for_decap_to_collapse_transition(delta):
 		get_tree().root.add_child(detached_head)
 		emit_signal("head_detached", detached_head)
 		# Enable head reattachment
-		for limb in [right_arm, left_arm, right_leg, left_leg]:
-			limb.animation_state = "collapse"
+		visual.set_animation_state("collapse")
 
 func _on_head_attempt_reattach():
 	if detached_head:
@@ -137,11 +138,9 @@ func reattach_head():
 	head.visible = true
 	should_collapse = false
 	input_disabled = false
-	for limb in [right_arm, left_arm, right_leg, left_leg]:
-		limb.animation_state = "idle"
-		limb.set_external_animation_time(0.0, 0.0)
+	visual.set_animation_state_with_timer("idle", 0.0, 0.0)
 	detach_cooldown = 0.2
-	emit_signal("head_reattached")
+	emit_signal("head_reattached", self)
 
 var time := 0.0
 func _process(delta):

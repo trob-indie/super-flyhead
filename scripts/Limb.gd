@@ -100,6 +100,9 @@ func _process(delta):
 	draw_limb_mesh(joints)
 	update_sprites(joints)
 
+func set_animation_state(state: String):
+	self.animation_state = state
+
 func animate_limb_walk(time: float) -> Array:
 	if limb_type == "arm":
 		return animate_arm_walk(time)
