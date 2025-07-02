@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" uid="uid://c8s566755sjlx" path="res://scripts/Mutant.gd" id="1_ov4ub"]
 [ext_resource type="Texture2D" uid="uid://dfbvuxfosbqty" path="res://sprites/body-parts/flyhead2.png" id="2_bs8cr"]
-[ext_resource type="Script" uid="uid://bwn0wiawinemr" path="res://scripts/AnimationController.gd" id="2_iprrb"]
+[ext_resource type="Script" uid="uid://bwn0wiawinemr" path="res://scripts/ProceduralAnimation/AnimationController.gd" id="2_iprrb"]
 [ext_resource type="Texture2D" uid="uid://csopwg1ljirjf" path="res://sprites/body-parts/variants/arm2_white.png" id="6_iprrb"]
 [ext_resource type="PackedScene" uid="uid://c1q42i3avb2fr" path="res://scenes/Limb.tscn" id="6_kxl4y"]
 [ext_resource type="Texture2D" uid="uid://bqr7hag76j6ms" path="res://sprites/body-parts/variants/shoulder2_white.png" id="7_dxt8y"]

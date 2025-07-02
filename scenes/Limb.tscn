@@ -1,6 +1,6 @@
 [gd_scene load_steps=6 format=3 uid="uid://c1q42i3avb2fr"]
 
-[ext_resource type="Script" uid="uid://6jadwuru45i" path="res://scripts/Limb.gd" id="1_8gyui"]
+[ext_resource type="Script" uid="uid://6jadwuru45i" path="res://scripts/ProceduralAnimation/LimbAnimator.gd" id="1_8gyui"]
 [ext_resource type="Script" uid="uid://pqh5osh6t1cy" path="res://scripts/ProceduralAnimation/SpriteMask.gd" id="2_046k3"]
 [ext_resource type="Texture2D" uid="uid://b51eesr5sjgu3" path="res://sprites/body-parts/elbow.png" id="3_hi5gt"]
 [ext_resource type="Texture2D" uid="uid://dlrdqfcvot5o8" path="res://sprites/body-parts/hand.png" id="4_5xu0v"]
