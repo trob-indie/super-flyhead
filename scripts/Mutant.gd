@@ -53,6 +53,7 @@ func _physics_process(delta):
 		for limb in [right_arm, left_arm, right_leg, left_leg]:
 			if limb.animation_state == "decapitate":
 				limb.set_external_animation_time(decap_anim_time, decap_duration)
+		velocity.x = lerp(velocity.x, 0.0, 0.5)
 		move_and_slide()
 		return
 
