@@ -11,4 +11,5 @@ script = ExtResource("1_6iwk6")
 [node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="."]
 
 [node name="Visual" type="Node2D" parent="."]
-visible = false
+
+[node name="BackWall" type="Node2D" parent="Visual"]

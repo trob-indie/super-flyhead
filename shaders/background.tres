@@ -1,0 +1,9 @@
+[gd_resource type="ShaderMaterial" load_steps=2 format=3 uid="uid://c6wloykuui803"]
+
+[ext_resource type="Shader" uid="uid://bvbqs7ewdfkcn" path="res://shaders/background.gdshader" id="1_dscg8"]
+
+[resource]
+shader = ExtResource("1_dscg8")
+shader_parameter/time_scale = 0.25
+shader_parameter/swirl_amount = 0.5
+shader_parameter/color_shift_speed = 1.2
