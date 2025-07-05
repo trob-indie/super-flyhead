@@ -5,7 +5,7 @@
 [ext_resource type="Script" uid="uid://dxyj5c4h0w6y6" path="res://scripts/MainCamera.gd" id="3_jyhfs"]
 [ext_resource type="Material" uid="uid://c6wloykuui803" path="res://shaders/background.tres" id="4_o6xl0"]
 [ext_resource type="PackedScene" uid="uid://duyei0wgq4v12" path="res://scenes/Room.tscn" id="4_tbgi4"]
-[ext_resource type="Texture2D" uid="uid://cert7pxu3krfk" path="res://sprites/environment/noise2.png" id="4_tefeu"]
+[ext_resource type="Texture2D" uid="uid://cert7pxu3krfk" path="res://sprites/environment/noise1.png" id="4_tefeu"]
 
 [node name="Node2D" type="Node2D"]
 

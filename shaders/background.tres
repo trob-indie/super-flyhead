@@ -6,4 +6,3 @@
 shader = ExtResource("1_dscg8")
 shader_parameter/time_scale = 0.25
 shader_parameter/swirl_amount = 0.5
-shader_parameter/color_shift_speed = 1.2
