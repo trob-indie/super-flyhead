@@ -1,6 +1,7 @@
-[gd_scene load_steps=2 format=3 uid="uid://duyei0wgq4v12"]
+[gd_scene load_steps=3 format=3 uid="uid://duyei0wgq4v12"]
 
 [ext_resource type="Script" uid="uid://cidp6uvbevm0i" path="res://scripts/Room.gd" id="1_6iwk6"]
+[ext_resource type="Script" uid="uid://gmo7jupjcokw" path="res://scripts/FloorGenerator.gd" id="2_liqgt"]
 
 [node name="Room" type="StaticBody2D"]
 position = Vector2(0, -157)
@@ -12,4 +13,6 @@ script = ExtResource("1_6iwk6")
 
 [node name="Visual" type="Node2D" parent="."]
 
-[node name="BackWall" type="Node2D" parent="Visual"]
+[node name="Floor" type="Node2D" parent="Visual"]
+position = Vector2(0, 62)
+script = ExtResource("2_liqgt")
