@@ -14,5 +14,5 @@ script = ExtResource("1_6iwk6")
 [node name="Visual" type="Node2D" parent="."]
 
 [node name="Floor" type="Node2D" parent="Visual"]
-position = Vector2(0, 62)
+position = Vector2(0, 309)
 script = ExtResource("2_liqgt")
