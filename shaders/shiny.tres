@@ -1,0 +1,9 @@
+[gd_resource type="ShaderMaterial" load_steps=2 format=3 uid="uid://bauglk6vd67bf"]
+
+[ext_resource type="Shader" uid="uid://xaxposv7jo0p" path="res://shaders/shiny.gdshader" id="1_j8nft"]
+
+[resource]
+shader = ExtResource("1_j8nft")
+shader_parameter/gloss_strength = 0.25
+shader_parameter/gloss_width = 0.2
+shader_parameter/time_speed = 0.5
