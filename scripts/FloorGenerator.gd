@@ -11,14 +11,28 @@ extends Node2D
 @export var horizontal_spacing_multiplier := 1.0
 @export var y_scale_near := 1.2
 @export var y_scale_far := 0.8
-@export var skew_amount := 0.3  # max skew at outermost columns
-@export var vertical_spacing_factor := 0.9
+@export var skew_amount := 0.3
+@export var vertical_spacing_factor := 1.0
 
 func _ready():
-	generate_perspective_grid()
+	generate_multimesh_tiles()
 
-func generate_perspective_grid():
-	# Precompute consistent column-based scale factors
+func generate_multimesh_tiles():
+	var mesh := QuadMesh.new()
+	mesh.size = tile_size
+	
+	var material := tile_shader.duplicate()
+	material.set_shader_parameter("texture_albedo", tile_texture)
+
+	var mm_instance := MultiMeshInstance2D.new()
+	var mm := MultiMesh.new()
+	mm.transform_format = MultiMesh.TRANSFORM_2D
+	mm.mesh = mesh
+	mm.instance_count = rows * columns
+	mm_instance.multimesh = mm
+	mm_instance.material = material
+	add_child(mm_instance)
+
 	var col_scale_factors := []
 	for col in range(columns):
 		var center_offset = col - (columns - 1) / 2.0
@@ -27,6 +41,7 @@ func generate_perspective_grid():
 		col_scale_factors.append(base_col_scale)
 
 	var y_offset = 0.0
+	var idx = 0
 
 	for row in range(rows):
 		var inverse_row = rows - row - 1
@@ -39,9 +54,6 @@ func generate_perspective_grid():
 		if row > 0:
 			var prev_row_ratio = float(rows - row) / (rows - 1)
 			var prev_y_scale = lerp(y_scale_near, y_scale_far, prev_row_ratio)
-			var prev_inverse_row = rows - row
-			var prev_row_scale = pow(depth_scale, prev_inverse_row)
-			var prev_tile_height = tile_size.y * prev_row_scale * prev_y_scale
 			var avg_scaled_height = tile_size.y * ((y_scale + prev_y_scale) / 2.0)
 			y_offset += avg_scaled_height * vertical_spacing_factor
 
@@ -59,18 +71,18 @@ func generate_perspective_grid():
 			var col_scale = col_scales[col]
 			var center_offset = col - (columns - 1) / 2.0
 			var normalized_offset = center_offset / ((columns - 1) / 2.0)
-			var skew_offset = -normalized_offset * skew_amount
+			var skew = -normalized_offset * skew_amount
 
-			var tile = Sprite2D.new()
-			tile.texture = tile_texture
-			tile.material = tile_shader
-			tile.scale = Vector2(col_scale, y_scale)
-			tile.skew = skew_offset
-			tile.position = Vector2(
-				x_start + x_offset + (tile_size.x * col_scale * horizontal_spacing_multiplier) / 2.0,
-				y_offset
+			var transform := Transform2D(
+				Vector2(col_scale, 0),
+				Vector2(skew, -y_scale),
+				Vector2(
+					x_start + x_offset + (tile_size.x * col_scale * horizontal_spacing_multiplier) / 2.0,
+					y_offset
+				)
 			)
-			tile.z_index = row
-			add_child(tile)
+
+			mm.set_instance_transform_2d(idx, transform)
+			idx += 1
 
 			x_offset += tile_size.x * col_scale * horizontal_spacing_multiplier
