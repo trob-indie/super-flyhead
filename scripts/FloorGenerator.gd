@@ -14,17 +14,27 @@ extends Node2D
 @export var skew_amount := 0.3
 @export var vertical_spacing_factor := 1.0
 
-func _ready():
-	generate_multimesh_tiles()
+var mm_instance: MultiMeshInstance2D
+var camera: Camera2D
 
-func generate_multimesh_tiles():
+func _ready():
+	camera = get_tree().get_root().find_child("Camera2D", true, false)
+	mm_instance = generate_multimesh_tiles()
+
+func _process(delta):
+	if mm_instance and mm_instance.material is ShaderMaterial:
+		var shader_mat := mm_instance.material as ShaderMaterial
+		var light_world_pos = Vector2(camera.global_position.x, camera.global_position.y - 300.0)
+		shader_mat.set_shader_parameter("light_position", light_world_pos)
+
+func generate_multimesh_tiles() -> MultiMeshInstance2D:
 	var mesh := QuadMesh.new()
 	mesh.size = tile_size
 	
 	var material := tile_shader.duplicate()
 	material.set_shader_parameter("texture_albedo", tile_texture)
 
-	var mm_instance := MultiMeshInstance2D.new()
+	var mm_instance = MultiMeshInstance2D.new()
 	var mm := MultiMesh.new()
 	mm.transform_format = MultiMesh.TRANSFORM_2D
 	mm.mesh = mesh
@@ -86,3 +96,4 @@ func generate_multimesh_tiles():
 			idx += 1
 
 			x_offset += tile_size.x * col_scale * horizontal_spacing_multiplier
+	return mm_instance

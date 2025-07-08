@@ -1,18 +1,26 @@
 shader_type canvas_item;
 
 uniform sampler2D texture_albedo;
-uniform float gloss_strength = 0.25;
-uniform float gloss_width = 0.15;
-uniform float time_speed = 0.5;
+uniform vec2 light_position = vec2(0.0, 0.0);
+uniform float gloss_strength = 0.3;
+uniform float roughness = 0.5;  // [0.0, 1.0]
+uniform float shininess = 40.0; // controls highlight sharpness
 
 void fragment() {
-    vec2 uv = UV;
-    vec4 tex_color = texture(texture_albedo, uv);
+    vec2 world_uv = (UV - 0.5) * 128.0 + vec2(FRAGCOORD.x, FRAGCOORD.y);
+    vec2 to_light = normalize(light_position - world_uv);
+    vec2 normal = vec2(0.0, -1.0); // tiles facing upward
 
-    float wave = uv.x + uv.y + sin(TIME * time_speed);
-    float gloss = smoothstep(0.5 - gloss_width, 0.5, wave) *
-                  smoothstep(0.5 + gloss_width, 0.5, wave);
+    float ndotl = max(dot(normal, to_light), 0.0);
+    
+    // Shinier tiles reflect more tightly
+    float specular = pow(ndotl, mix(1.0, shininess, 1.0 - roughness));
 
-    vec3 highlight = mix(tex_color.rgb, vec3(1.0), gloss * gloss_strength);
-    COLOR = vec4(highlight, tex_color.a);
+    // Final gloss color
+    float gloss = specular * (1.0 - roughness) * gloss_strength;
+
+    vec4 tex_color = texture(texture_albedo, UV);
+    vec3 final_color = mix(tex_color.rgb, vec3(1.0), gloss);
+
+    COLOR = vec4(final_color, tex_color.a);
 }
