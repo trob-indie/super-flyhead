@@ -36,7 +36,7 @@ var decap_anim_time = 0.0
 var detached_head = null
 var can_reattach = false
 
-signal head_detached
+signal head_detached(facing_right: bool)
 signal head_reattached
 
 var detach_cooldown := 0.0
@@ -124,7 +124,7 @@ func wait_for_decap_to_collapse_transition(delta):
 		detached_head.global_position = head.global_position
 		detached_head.name = "Head"
 		get_tree().root.add_child(detached_head)
-		emit_signal("head_detached", detached_head)
+		emit_signal("head_detached", detached_head, facing_right)
 		# Enable head reattachment
 		visual.set_animation_state("collapse")
 

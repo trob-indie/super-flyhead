@@ -34,6 +34,7 @@ var gateway_y_threshold := 0.0
 
 var can_attach = false
 var attach_area = null
+
 signal attempt_reattach
 
 func _ready():
@@ -196,9 +197,11 @@ func enter_path(path: Path2D, direction: int):
 	path_speed = linear_velocity.length()
 	linear_velocity = Vector2.ZERO
 
-func _on_head_detached(new_head):
+func _on_head_detached(new_head, facing_right):
 	if new_head == self:
 		input_disabled = false
+		if !facing_right:
+			$Sprite2D.scale = Vector2(-1.0, 1.0)
 
 func lock_x_position(y_threshold: float) -> void:
 	is_x_locked = true
