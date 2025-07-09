@@ -3,7 +3,7 @@ extends Node2D
 @export var tile_texture: Texture2D = preload("res://sprites/environment/padded-room/tile.png")
 @export var tile_shader: ShaderMaterial = preload("res://shaders/shiny.tres")
 @export var rows := 3
-@export var columns := 16
+@export var columns := 18
 @export var tile_size := Vector2(128, 128)
 @export var base_scale := 1.0
 @export var depth_scale := 0.96
