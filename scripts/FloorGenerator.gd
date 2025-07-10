@@ -3,16 +3,19 @@ extends Node2D
 @export var tile_texture: Texture2D = preload("res://sprites/environment/padded-room/tile.png")
 @export var tile_shader: ShaderMaterial = preload("res://shaders/shiny.tres")
 @export var rows := 3
-@export var columns := 18
-@export var tile_size := Vector2(128, 128)
+@export var columns := 34
+@export var tile_size := Vector2(96, 96)
 @export var base_scale := 1.0
 @export var depth_scale := 0.96
 @export var perspective_skew := 0.3
 @export var horizontal_spacing_multiplier := 1.0
-@export var y_scale_near := 1.2
-@export var y_scale_far := 0.8
-@export var skew_amount := 0.3
+@export var y_scale_near := 0.60
+@export var y_scale_far := 0.42
+@export var skew_amount := 1.0
 @export var vertical_spacing_factor := 1.0
+@export var row_width_near := 1.02
+@export var row_width_far := 1.02
+@export var flip_vertical := false # NEW: set true for ceiling
 
 var mm_instance: MultiMeshInstance2D
 var camera: Camera2D
@@ -54,23 +57,25 @@ func generate_multimesh_tiles() -> MultiMeshInstance2D:
 	var idx = 0
 
 	for row in range(rows):
-		var inverse_row = rows - row - 1
-		var row_scale = pow(depth_scale, inverse_row)
+		var effective_row = row if flip_vertical else (rows - row - 1)
+		var next_row = (row + 1) if flip_vertical else (rows - row)
 
-		var row_ratio = float(rows - row - 1) / (rows - 1)
+		var row_scale = pow(depth_scale, effective_row)
+		var row_ratio = float(effective_row) / (rows - 1)
 		var y_scale = lerp(y_scale_near, y_scale_far, row_ratio)
 		var tile_height = tile_size.y * row_scale * y_scale
 
 		if row > 0:
-			var prev_row_ratio = float(rows - row) / (rows - 1)
+			var prev_row_ratio = float(next_row) / (rows - 1)
 			var prev_y_scale = lerp(y_scale_near, y_scale_far, prev_row_ratio)
 			var avg_scaled_height = tile_size.y * ((y_scale + prev_y_scale) / 2.0)
 			y_offset += avg_scaled_height * vertical_spacing_factor
 
+		var width_factor = lerp(row_width_near, row_width_far, row_ratio)
 		var row_width = 0.0
 		var col_scales := []
 		for col in range(columns):
-			var col_scale = row_scale * col_scale_factors[col]
+			var col_scale = row_scale * col_scale_factors[col] * width_factor
 			col_scales.append(col_scale)
 			row_width += tile_size.x * col_scale * horizontal_spacing_multiplier
 
@@ -85,7 +90,7 @@ func generate_multimesh_tiles() -> MultiMeshInstance2D:
 
 			var transform := Transform2D(
 				Vector2(col_scale, 0),
-				Vector2(skew, -y_scale),
+				Vector2(skew, -y_scale * (-1.0 if flip_vertical else 1.0)),
 				Vector2(
 					x_start + x_offset + (tile_size.x * col_scale * horizontal_spacing_multiplier) / 2.0,
 					y_offset
@@ -96,4 +101,5 @@ func generate_multimesh_tiles() -> MultiMeshInstance2D:
 			idx += 1
 
 			x_offset += tile_size.x * col_scale * horizontal_spacing_multiplier
+
 	return mm_instance

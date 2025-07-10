@@ -18,6 +18,7 @@ script = ExtResource("3_jyhfs")
 mutant_path = NodePath("../Mutant")
 
 [node name="Background" type="Node2D" parent="Camera2D"]
+position = Vector2(0, -163)
 
 [node name="Sprite2D" type="Sprite2D" parent="Camera2D/Background"]
 material = ExtResource("4_o6xl0")
