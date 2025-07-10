@@ -1,9 +1,10 @@
-[gd_scene load_steps=5 format=3 uid="uid://duyei0wgq4v12"]
+[gd_scene load_steps=6 format=3 uid="uid://duyei0wgq4v12"]
 
 [ext_resource type="Script" uid="uid://cidp6uvbevm0i" path="res://scripts/Room.gd" id="1_6iwk6"]
 [ext_resource type="Script" uid="uid://gmo7jupjcokw" path="res://scripts/FloorGenerator.gd" id="2_liqgt"]
 [ext_resource type="Texture2D" uid="uid://d1dxynt37s1xs" path="res://sprites/hallway-tile.png" id="3_hfcue"]
 [ext_resource type="Texture2D" uid="uid://brrix6qrs0luq" path="res://sprites/hallway-wall.png" id="4_tnfip"]
+[ext_resource type="Texture2D" uid="uid://dbiystua17qpi" path="res://sprites/hallway-wall-side.png" id="5_6iwk6"]
 
 [node name="Room" type="StaticBody2D"]
 position = Vector2(0, -157)
@@ -21,18 +22,32 @@ script = ExtResource("2_liqgt")
 tile_texture = ExtResource("3_hfcue")
 
 [node name="Walls" type="Node2D" parent="Visual"]
+position = Vector2(0, 14)
 
 [node name="Back" type="Node2D" parent="Visual/Walls"]
-position = Vector2(0, -59)
+position = Vector2(0, -51)
 
 [node name="Sprite2D" type="Sprite2D" parent="Visual/Walls/Back"]
-position = Vector2(0, -3)
 texture = ExtResource("4_tnfip")
 
 [node name="Sprite2D2" type="Sprite2D" parent="Visual/Walls/Back"]
-position = Vector2(784, -3)
+position = Vector2(776, 0)
 texture = ExtResource("4_tnfip")
 
 [node name="Sprite2D3" type="Sprite2D" parent="Visual/Walls/Back"]
-position = Vector2(-784, -3)
+position = Vector2(-776, 0)
 texture = ExtResource("4_tnfip")
+
+[node name="Right" type="Node2D" parent="Visual/Walls"]
+position = Vector2(1335, -76)
+
+[node name="Sprite2D" type="Sprite2D" parent="Visual/Walls/Right"]
+position = Vector2(-15, 9)
+texture = ExtResource("5_6iwk6")
+
+[node name="Node2D" type="Node2D" parent="Visual/Walls"]
+position = Vector2(-1320, -67)
+
+[node name="Sprite2D" type="Sprite2D" parent="Visual/Walls/Node2D"]
+scale = Vector2(-1, 1)
+texture = ExtResource("5_6iwk6")
