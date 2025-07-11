@@ -1,0 +1,10 @@
+[gd_resource type="ShaderMaterial" load_steps=2 format=3 uid="uid://cluq5676vl0l8"]
+
+[ext_resource type="Shader" uid="uid://dgo4o7qgbpxwi" path="res://shaders/wallpaper.gdshader" id="1_86sys"]
+
+[resource]
+shader = ExtResource("1_86sys")
+shader_parameter/base_color = Color(0.82, 0.85, 0.87, 1)
+shader_parameter/noise_strength = 0.04
+shader_parameter/pattern_scale = 40.0
+shader_parameter/brightness_variation = 0.02

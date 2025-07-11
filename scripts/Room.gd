@@ -1,7 +1,7 @@
 extends StaticBody2D
 
-@export var room_width := 2048.0
-@export var room_height := 1024.0
+@export var room_width := 2240.0
+@export var room_height := 992.0
 @export var thickness := 128.0 # Thickness of the walkable track band
 @export var arc_resolution := 32
 

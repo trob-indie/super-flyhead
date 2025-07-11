@@ -1,0 +1,13 @@
+[gd_resource type="ShaderMaterial" load_steps=2 format=3 uid="uid://c5omrnbg2k6dl"]
+
+[ext_resource type="Shader" uid="uid://1mwivuyt3f4n" path="res://shaders/ceiling_tile.gdshader" id="1_88l7e"]
+
+[resource]
+shader = ExtResource("1_88l7e")
+shader_parameter/base_color = Color(0.94, 0.94, 0.93, 1)
+shader_parameter/speckle_density = 200.0
+shader_parameter/speckle_intensity = 0.15
+shader_parameter/speckle_size = 1.0
+shader_parameter/tile_line_width = 0.02
+shader_parameter/tile_spacing = 0.25
+shader_parameter/tile_line_color = Vector3(0.85, 0.85, 0.85)

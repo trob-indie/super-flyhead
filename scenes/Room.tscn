@@ -1,10 +1,22 @@
-[gd_scene load_steps=6 format=3 uid="uid://duyei0wgq4v12"]
+[gd_scene load_steps=12 format=3 uid="uid://duyei0wgq4v12"]
 
 [ext_resource type="Script" uid="uid://cidp6uvbevm0i" path="res://scripts/Room.gd" id="1_6iwk6"]
 [ext_resource type="Script" uid="uid://gmo7jupjcokw" path="res://scripts/FloorGenerator.gd" id="2_liqgt"]
 [ext_resource type="Texture2D" uid="uid://d1dxynt37s1xs" path="res://sprites/hallway-tile.png" id="3_hfcue"]
+[ext_resource type="Material" uid="uid://cluq5676vl0l8" path="res://shaders/wallpaper.tres" id="4_8h30a"]
+[ext_resource type="Material" uid="uid://c5omrnbg2k6dl" path="res://shaders/ceiling_tile.tres" id="4_b5ryx"]
 [ext_resource type="Texture2D" uid="uid://brrix6qrs0luq" path="res://sprites/hallway-wall.png" id="4_tnfip"]
 [ext_resource type="Texture2D" uid="uid://dbiystua17qpi" path="res://sprites/hallway-wall-side.png" id="5_6iwk6"]
+[ext_resource type="Texture2D" uid="uid://bn4spirbf1mnn" path="res://sprites/hallway-wall-trim.png" id="5_ut7mc"]
+[ext_resource type="Shader" uid="uid://dgo4o7qgbpxwi" path="res://shaders/wallpaper.gdshader" id="7_lygdb"]
+[ext_resource type="Texture2D" uid="uid://ishyt8kb4tr2" path="res://sprites/hallway-trim-side.png" id="9_b5ryx"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_3q5rq"]
+shader = ExtResource("7_lygdb")
+shader_parameter/base_color = Color(0.82, 0.85, 0.87, 1)
+shader_parameter/noise_strength = 0.04
+shader_parameter/pattern_scale = 40.0
+shader_parameter/brightness_variation = 0.02
 
 [node name="Room" type="StaticBody2D"]
 position = Vector2(0, -157)
@@ -13,6 +25,9 @@ collision_mask = 3
 script = ExtResource("1_6iwk6")
 
 [node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="."]
+z_index = 20
+z_as_relative = false
+position = Vector2(5, 35)
 
 [node name="Visual" type="Node2D" parent="."]
 
@@ -25,6 +40,7 @@ tile_texture = ExtResource("3_hfcue")
 position = Vector2(0, -389)
 script = ExtResource("2_liqgt")
 tile_texture = ExtResource("3_hfcue")
+tile_shader = ExtResource("4_b5ryx")
 columns = 24
 y_scale_near = 0.8
 y_scale_far = 0.6
@@ -38,27 +54,53 @@ position = Vector2(0, 102)
 [node name="Back" type="Node2D" parent="Visual/Walls"]
 position = Vector2(0, -51)
 
-[node name="Sprite2D" type="Sprite2D" parent="Visual/Walls/Back"]
-texture = ExtResource("4_tnfip")
-
-[node name="Sprite2D2" type="Sprite2D" parent="Visual/Walls/Back"]
+[node name="RightSegment" type="Node2D" parent="Visual/Walls/Back"]
 position = Vector2(776, 0)
+
+[node name="Wallpaper" type="Sprite2D" parent="Visual/Walls/Back/RightSegment"]
+material = ExtResource("4_8h30a")
 texture = ExtResource("4_tnfip")
 
-[node name="Sprite2D3" type="Sprite2D" parent="Visual/Walls/Back"]
-position = Vector2(-776, 0)
+[node name="Trim" type="Sprite2D" parent="Visual/Walls/Back/RightSegment"]
+texture = ExtResource("5_ut7mc")
+
+[node name="MiddleSegment" type="Node2D" parent="Visual/Walls/Back"]
+
+[node name="Wallpaper" type="Sprite2D" parent="Visual/Walls/Back/MiddleSegment"]
+material = ExtResource("4_8h30a")
 texture = ExtResource("4_tnfip")
+
+[node name="TrimMiddle" type="Sprite2D" parent="Visual/Walls/Back/MiddleSegment"]
+texture = ExtResource("5_ut7mc")
+
+[node name="LeftSegment" type="Node2D" parent="Visual/Walls/Back"]
+position = Vector2(-776, 0)
+
+[node name="Wallpaper" type="Sprite2D" parent="Visual/Walls/Back/LeftSegment"]
+material = ExtResource("4_8h30a")
+texture = ExtResource("4_tnfip")
+
+[node name="Trim" type="Sprite2D" parent="Visual/Walls/Back/LeftSegment"]
+texture = ExtResource("5_ut7mc")
 
 [node name="Right" type="Node2D" parent="Visual/Walls"]
-position = Vector2(1335, -76)
+position = Vector2(1320, -67)
 
-[node name="Sprite2D" type="Sprite2D" parent="Visual/Walls/Right"]
-position = Vector2(-15, 9)
+[node name="Wallpaper" type="Sprite2D" parent="Visual/Walls/Right"]
+material = SubResource("ShaderMaterial_3q5rq")
 texture = ExtResource("5_6iwk6")
 
-[node name="Node2D" type="Node2D" parent="Visual/Walls"]
+[node name="Trim" type="Sprite2D" parent="Visual/Walls/Right"]
+texture = ExtResource("9_b5ryx")
+
+[node name="Left" type="Node2D" parent="Visual/Walls"]
 position = Vector2(-1320, -67)
 
-[node name="Sprite2D" type="Sprite2D" parent="Visual/Walls/Node2D"]
+[node name="Wallpaper" type="Sprite2D" parent="Visual/Walls/Left"]
+material = ExtResource("4_8h30a")
 scale = Vector2(-1, 1)
 texture = ExtResource("5_6iwk6")
+
+[node name="Trim" type="Sprite2D" parent="Visual/Walls/Left"]
+scale = Vector2(-1, 1)
+texture = ExtResource("9_b5ryx")
